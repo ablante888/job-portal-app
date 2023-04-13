@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:project1/profile/profile_picture.dart';
+import 'package:project1/job_seeker_home_page/profile_picture.dart';
 import 'package:project1/user_account/utils.dart';
 import '../models/job_seeker_profile_model.dart';
 
@@ -123,9 +123,9 @@ class _SkillSetState extends State<SkillSet> {
         .collection('profile')
         .doc('profile_pecture')
         .set({'imageUrl': imageUrl});
-    FirebaseFirestore.instance.collection('images').add({
-      'imageUrl': imageUrl,
-    });
+    // FirebaseFirestore.instance.collection('images').add({
+    //   'imageUrl': imageUrl,
+    // });
   }
   // FirebaseStorage _storage = FirebaseStorage.instance;
   // Future<Uri> uploadPic() async {

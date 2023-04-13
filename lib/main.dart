@@ -12,7 +12,7 @@ import '../user_account/verify_email.dart';
 import 'profile/education.dart';
 import 'profile/skills.dart';
 import 'profile/experience.dart';
-import 'profile/profile_picture.dart';
+import 'job_seeker_home_page/profile_picture.dart';
 import 'Employers/Employers_account/emp_auth_page.dart';
 import 'user_account/rgister.dart';
 import './loginOption.dart';
