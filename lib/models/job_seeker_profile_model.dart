@@ -1,15 +1,34 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
+import 'package:project1/profile/experience.dart';
+
 class JobSeekerProfile {
   final PersonalInfo personalInfo;
-  final List<Education> education;
-  final List<ExperienceModel> experience;
+  // final List<Education> education;
+  // final List<ExperienceModel> experience;
+  // final List<Skill> skills;
+  final Education education;
+  final ExperienceModel experience;
   final List<Skill> skills;
-
   JobSeekerProfile({
     required this.personalInfo,
-    this.education = const [],
-    this.experience = const [],
-    this.skills = const [],
+    required this.education,
+    required this.experience,
+    required this.skills,
+    // this.education = const [],
+    // this.experience = const [],
+    // this.skills = const [],
   });
+  factory JobSeekerProfile.fromMap(Map<String, dynamic> data) {
+    return JobSeekerProfile(
+      personalInfo: data['email'],
+      education: Education.fromMap(data['education']),
+      experience: ExperienceModel.fromMap(data['experience']),
+      skills:
+          List<Skill>.from(data['skills'].map((skill) => Skill.fromMap(skill))),
+    );
+  }
 }
 
 class PersonalInfo {
@@ -40,6 +59,15 @@ class PersonalInfo {
         'email': email,
         'phone number': phoneNumber,
       };
+  static PersonalInfo fromJeson(Map<String, dynamic> json) => PersonalInfo(
+      id: json['id'],
+      firstName: json['first name'],
+      lastName: json['last name'],
+      gender: json['gender'],
+      city: json['city'],
+      region: json['region'],
+      email: json['email'],
+      phoneNumber: json[['phone number']]);
 }
 
 class Education {
@@ -65,6 +93,12 @@ class Education {
         'startDte': startDate,
         'endDate': endDate,
       };
+  factory Education.fromMap(Map<String, dynamic> json) => Education(
+      levelOfEducation: json['levelOfEducation'],
+      institution: json['institution'],
+      fieldOfStudy: json['fieldOfStudy'],
+      startDate: json['startDate'],
+      endDate: json['endDate']);
 }
 
 class ExperienceModel {
@@ -91,6 +125,13 @@ class ExperienceModel {
         'Region': region,
         'city': city
       };
+  factory ExperienceModel.fromMap(Map<String, dynamic> json) => ExperienceModel(
+      title: json['job title'],
+      company: json['company'],
+      startDate: json['startDte'],
+      endDate: json['End Date'],
+      region: json['Region'],
+      city: json['city']);
 }
 
 class Skill {
@@ -106,4 +147,24 @@ class Skill {
         'personal skills': personalSkills,
         'language skills': languageSkills,
       };
+  factory Skill.fromMap(Map<String, dynamic> json) => Skill(
+      languageSkills: json['language skills'],
+      personalSkills: json['personal skills'],
+      professionalSkills: json['professional skills']);
 }
+
+// class EducationProvider extends ChangeNotifier{
+//   late String _degree;
+//   late String _institution;
+//   late String _startDate;
+//   late String _endDate;
+
+//   EducationProvider({
+//     required String levelOfEducation,
+//     required String institution,
+//      required String fieldOfStudy,
+//     required String startDate,
+//     required String endDate,
+//   }) 
+//   set eduaction(String levelOfEducation,String institution,String fieldOfStudy, String startDate,String endDate){}
+// }

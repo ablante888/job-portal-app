@@ -6,14 +6,15 @@ import 'posted_jobs.dart';
 import 'notification.dart';
 import 'candidates.dart';
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({Key? key}) : super(key: key);
+class TabsScreen extends StatefulWidget {
+  static const routeName = '/TabsScreen';
+  const TabsScreen({Key? key}) : super(key: key);
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<TabsScreen> createState() => _TabsScreenState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _TabsScreenState extends State<TabsScreen> {
   final List<Map<String, dynamic>> _pages = [
     {'page': EmpHomePage(), 'title': Text('home')},
     {'page': Posted_jobs(), 'title': Text('jobs posted')},

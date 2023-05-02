@@ -73,10 +73,11 @@ class _ExperienceState extends State<Experience> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(' Prior work experience'),
                 Text(' job title'),
@@ -215,24 +216,24 @@ class _ExperienceState extends State<Experience> {
                 Text('projects worked on'),
                 ElevatedButton.icon(
                   onPressed: () {
-                    // if (_formKey.currentState!.validate()) {
-                    //   _formKey.currentState?.save();
-                    //   final experienceInfo = ExperienceModel(
-                    //       title: jobTitle,
-                    //       company: company,
-                    //       startDate: startDate,
-                    //       endDate: endDate,
-                    //       city: city,
-                    //       region: region);
-                    //   try {
-                    //     saveExperienceInfo(experienceInfo);
-                    //     Utils.showSnackBar('sucessfully saved', Colors.green);
-                    //   } on FirebaseException catch (e) {
-                    //     Utils.showSnackBar(e.message, Colors.red);
-                    //   }
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState?.save();
+                      final experienceInfo = ExperienceModel(
+                          title: jobTitle,
+                          company: company,
+                          startDate: startDate,
+                          endDate: endDate,
+                          city: city,
+                          region: region);
+                      // try {
+                      //   //saveExperienceInfo(experienceInfo);
+                      //   Utils.showSnackBar('sucessfully saved', Colors.green);
+                      // } on FirebaseException catch (e) {
+                      //   Utils.showSnackBar(e.message, Colors.red);
+                      // }
 
-                    Navigator.pushNamed(context, SkillSet.routeName);
-                    // }
+                      Navigator.pushNamed(context, SkillSet.routeName);
+                    }
                   },
                   icon: Icon(Icons.navigate_next),
                   label: Text('Next'),

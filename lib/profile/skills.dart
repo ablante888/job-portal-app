@@ -5,13 +5,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:project1/job_seeker_home_page/profile_picture.dart';
+import 'package:project1/job_seeker_home_page/jobSeekerHome.dart';
 import 'package:project1/user_account/utils.dart';
 import '../models/job_seeker_profile_model.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Employers/emp_profile/compLogo_Picker.dart';
+import './education.dart';
+import './experience.dart';
+import './personal_info.dart';
 
 class SkillSet extends StatefulWidget {
   //const SkillSet({Key? key}) : super(key: key);
@@ -22,6 +25,7 @@ class SkillSet extends StatefulWidget {
 }
 
 class _SkillSetState extends State<SkillSet> {
+  String? uid;
   File? _image;
   List<String> personalSkill = [];
   List<String> proffesionalSkill = [];
@@ -77,7 +81,7 @@ class _SkillSetState extends State<SkillSet> {
   }
 
   // void addLanguageSkill(List skills, Function addSkill) {}
-  void _removeSkill(String skill) {
+  void _removeLanguageSkill(String skill) {
     setState(() {
       languageSkill.remove(skill);
     });
@@ -98,68 +102,58 @@ class _SkillSetState extends State<SkillSet> {
     });
   }
 
-  // Future<String> uploadImageToFirebase(File imageFile) async {
-  //   String fileName = (imageFile.path);
-  // final DocumentReference storageReference=FirebaseFirestore.instance.
-  // firebase_storage.Reference ref =
-  //     firebase_storage.FirebaseStorage.instance.ref().child(fileName);
-  // firebase_storage.UploadTask uploadTask = ref.putFile(imageFile);
-  // String imageUrl = await (await uploadTask).ref.getDownloadURL();
-  // return imageUrl;
+  // Future uploadImage() async {
+  //   final fileName = _image?.path.split('/').last;
+  //   Reference ref = FirebaseStorage.instance.ref(fileName);
+  //   UploadTask uploadTask = ref.putFile(_image as File);
+  //   TaskSnapshot taskSnapshot = await uploadTask;
+  //   String dowloadUrl = await taskSnapshot.ref.getDownloadURL();
+  //   return dowloadUrl;
   // }
-  Future uploadImage() async {
-    final fileName = _image?.path.split('/').last;
-    Reference ref = FirebaseStorage.instance.ref(fileName);
-    UploadTask uploadTask = ref.putFile(_image as File);
-    TaskSnapshot taskSnapshot = await uploadTask;
-    String dowloadUrl = await taskSnapshot.ref.getDownloadURL();
-    return dowloadUrl;
-  }
 
-  Future<void> addImageToFirestore() async {
-    String imageUrl = await uploadImage();
-    user_reference
-        .doc(getCurrentUserUid())
-        .collection('profile')
-        .doc('profile_pecture')
-        .set({'imageUrl': imageUrl});
-    // FirebaseFirestore.instance.collection('images').add({
-    //   'imageUrl': imageUrl,
-    // });
-  }
-  // FirebaseStorage _storage = FirebaseStorage.instance;
-  // Future<Uri> uploadPic() async {
-  //   //Get the file from the image picker and store it
-  //   File? image = _image;
-  //   //Create a reference to the location
-  //   StorageReference reference = _storage.ref().child("images/");
-  //   //Upload the file to firebase
-  //   StorageUploadTask uploadTask = reference.putFile(image);
-
-  //   //Wait for upload to complete
-  //   await uploadTask.onComplete;
-  //   //Get download URL
-  //   String url = await reference.getDownloadURL();
-  //   return Uri.parse(url);
+  // Future<void> addImageToFirestore() async {
+  //   String imageUrl = await uploadImage();
+  //   user_reference
+  //       .doc(getCurrentUserUid())
+  //       .collection('profile')
+  //       .doc('profile_pecture')
+  //       .set({'imageUrl': imageUrl});
+  //   // FirebaseFirestore.instance.collection('images').add({
+  //   //   'imageUrl': imageUrl,
+  //   // });
   // }
 
   String getCurrentUserUid() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      uid = user.uid;
       return user.uid;
     } else {
       return '';
     }
   }
 
-// Map<String,dynamic> intoJson( String key,dynamic value){
-//  return 'key':value;
-// }
   final user_reference = FirebaseFirestore.instance.collection('job-seeker');
   Future saveSkillInfo(Skill job_seeker_skill) async {
     final personal_info_doc_ref = user_reference.doc(getCurrentUserUid());
     final json = job_seeker_skill.toJeson();
     await personal_info_doc_ref.collection('profile').doc('skills').set(json);
+  }
+
+  UploadTask? fileUpload(String destination, File? file) {
+    try {
+      final ref = FirebaseStorage.instance.ref(destination);
+      return ref.putFile(file as File);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future uploadFile() async {
+    if (_image == null) return;
+    final fileName = _image!.path;
+    final destination = 'files/${fileName}';
+    fileUpload(destination, _image);
   }
 
   @override
@@ -172,39 +166,38 @@ class _SkillSetState extends State<SkillSet> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('Share your skills with us'),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                        left: 40.0, right: 10.0, top: 10.0, bottom: 10.0),
-                    width: MediaQuery.of(context).size.width * 4 / 5,
-                    child: TextFormField(
-                      // onSubmitted: _addProffSkill,
-                      controller: profSkillController,
-                      decoration: InputDecoration(
-                        label: Text(' Professional skills'),
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _addProffSkill(profSkillController.text);
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: Colors.pink,
-                            )),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
+
+              Container(
+                // padding: EdgeInsets.only(
+                //     left: 60.0, right: 10.0, top: 10.0, bottom: 10.0),
+                width: MediaQuery.of(context).size.width * 4 / 5,
+                child: TextFormField(
+                  // onSubmitted: _addProffSkill,
+                  controller: profSkillController,
+                  decoration: InputDecoration(
+                    label: Text(' Professional skills'),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          _addProffSkill(profSkillController.text);
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.pink,
+                        )),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
+
               SizedBox(
                 height: 10,
               ),
@@ -215,41 +208,39 @@ class _SkillSetState extends State<SkillSet> {
                   ...proffesionalSkill.map(
                     (skill) => Chip(
                       label: Text(skill),
-                      onDeleted: () => _removeSkill(skill),
+                      onDeleted: () => _removeproffSkill(skill),
                     ),
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                        left: 40.0, right: 10.0, top: 10.0, bottom: 10.0),
-                    width: MediaQuery.of(context).size.width * 4 / 5,
-                    child: TextFormField(
-                      // onChanged: _addPersonalSkill,
-                      controller: persSkillController,
-                      decoration: InputDecoration(
-                        label: Text(' personal skills'),
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _addPersonalSkill(persSkillController.text);
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: Colors.pink,
-                            )),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
+
+              Container(
+                // padding: EdgeInsets.only(
+                //     left: 60.0, right: 10.0, top: 10.0, bottom: 10.0),
+                width: MediaQuery.of(context).size.width * 4 / 5,
+                child: TextFormField(
+                  // onChanged: _addPersonalSkill,
+                  controller: persSkillController,
+                  decoration: InputDecoration(
+                    label: Text(' personal skills'),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          _addPersonalSkill(persSkillController.text);
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.pink,
+                        )),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
+
               SizedBox(
                 height: 10,
               ),
@@ -260,42 +251,39 @@ class _SkillSetState extends State<SkillSet> {
                   ...personalSkill.map(
                     (skill) => Chip(
                       label: Text(skill),
-                      onDeleted: () => _removeSkill(skill),
+                      onDeleted: () => _removePersonalSkill(skill),
                     ),
                   ),
                 ],
               ),
 
-              Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                        left: 40.0, right: 10.0, top: 10.0, bottom: 10.0),
-                    width: MediaQuery.of(context).size.width * 4 / 5,
-                    child: TextFormField(
-                      //onChanged: _addLanguageSkill,
-                      controller: langSkillController,
-                      decoration: InputDecoration(
-                        label: Text(' Language skills'),
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              _addLanguageSkill(langSkillController.text);
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: Colors.pink,
-                            )),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
+              Container(
+                // padding: EdgeInsets.only(
+                //     left: 60.0, right: 10.0, top: 10.0, bottom: 10.0),
+                width: MediaQuery.of(context).size.width * 4 / 5,
+                child: TextFormField(
+                  //onChanged: _addLanguageSkill,
+                  controller: langSkillController,
+                  decoration: InputDecoration(
+                    label: Text(' Language skills'),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          _addLanguageSkill(langSkillController.text);
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.pink,
+                        )),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
+
               SizedBox(
                 height: 10,
               ),
@@ -306,17 +294,18 @@ class _SkillSetState extends State<SkillSet> {
                   ...languageSkill.map(
                     (skill) => Chip(
                       label: Text(skill),
-                      onDeleted: () => _removeSkill(skill),
+                      onDeleted: () => _removeLanguageSkill(skill),
                     ),
                   ),
                 ],
               ),
               Text('Achievements'),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: EdgeInsets.only(
-                        left: 40.0, right: 10.0, top: 10.0, bottom: 10.0),
+                    // padding: EdgeInsets.only(
+                    //     left: 60.0, right: 10.0, top: 10.0, bottom: 10.0),
                     width: MediaQuery.of(context).size.width * 4 / 5,
                     child: TextFormField(
                       // onSubmitted: _addAchivSkill,
@@ -325,7 +314,7 @@ class _SkillSetState extends State<SkillSet> {
                         label: Text(' achivement skills'),
                         suffixIcon: IconButton(
                             onPressed: () {
-                              _addProffSkill(profSkillController.text);
+                              _addAchivSkill(profSkillController.text);
                             },
                             icon: Icon(
                               Icons.add,
@@ -352,48 +341,52 @@ class _SkillSetState extends State<SkillSet> {
                   ...achivSkill.map(
                     (skill) => Chip(
                       label: Text(skill),
-                      onDeleted: () => _removeSkill(skill),
+                      onDeleted: () => _removeAchivSkill(skill),
                     ),
                   ),
                 ],
               ),
+
               Padding(
                 padding: EdgeInsets.all(8),
                 child: Text('Tell us about yourself'),
               ),
               SizedBox(height: 16.0),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: TextFormField(
-                  onSaved: (newValue) {
-                    if (newValue != null) about = newValue;
-                  },
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    labelText: 'summary',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
+              Container(
+                width: MediaQuery.of(context).size.width * 4 / 5,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                  child: TextFormField(
+                    onSaved: (newValue) {
+                      if (newValue != null) about = newValue;
+                    },
+                    maxLines: 10,
+                    decoration: InputDecoration(
+                      labelText: 'summary',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.blue,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                        ),
                       ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.red,
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                        ),
                       ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                        color: Colors.red,
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),
@@ -407,26 +400,29 @@ class _SkillSetState extends State<SkillSet> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState?.save();
-                    // final skill_Set = Skill(
-                    //     languageSkills: languageSkill,
-                    //     personalSkills: personalSkill,
-                    //     professionalSkills: proffesionalSkill);
+                    final skill_Set = Skill(
+                        languageSkills: languageSkill,
+                        personalSkills: personalSkill,
+                        professionalSkills: proffesionalSkill);
 
-                    try {
-                      // saveSkillInfo(skill_Set);
-                      user_reference
-                          .doc(getCurrentUserUid())
-                          .collection('profile')
-                          .doc('About')
-                          .set({'summary': about});
-                      uploadImage();
-                      addImageToFirestore();
-                      Utils.showSnackBar('sucessfully saved', Colors.green);
-                    } on FirebaseException catch (e) {
-                      Utils.showSnackBar(e.message, Colors.red);
-                    }
+                    // try {
+                    //   // saveSkillInfo(skill_Set);
+                    //   user_reference
+                    //       .doc(getCurrentUserUid())
+                    //       .collection('profile')
+                    //       .doc('About')
+                    //       .set({'summary': about});
+                    //   // uploadImage();
+                    //   // addImageToFirestore();
+                    //   // uploadFile();
+                    //   Utils.showSnackBar('sucessfully saved', Colors.green);
+                    // } on FirebaseException catch (e) {
+                    //   Utils.showSnackBar(e.message, Colors.red);
+                    // }
                   }
-                  Navigator.of(context).pushNamed(profilePicture.routeName);
+
+                  Navigator.of(context)
+                      .pushNamed(home.routeName, arguments: _image);
                 },
                 // icon: Icon(Icons.navigate_next),
                 style: ElevatedButton.styleFrom(
@@ -434,7 +430,7 @@ class _SkillSetState extends State<SkillSet> {
                     //maximumSize: Size.fromWidth(30)
                     ),
                 //ElevatedButton.styleFrom(minimumSize: Size.fromWidth(50)),
-                child: Text('save'),
+                child: Text('Finish'),
               ),
             ],
           ),

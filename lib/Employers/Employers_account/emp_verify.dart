@@ -6,17 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:project1/user_account/utils.dart';
-import '../emp_home_page.dart';
+import '../bridgeTOemp_home_page.dart';
 import 'emp_auth_page.dart';
 
-class VerifyEmail extends StatefulWidget {
-  const VerifyEmail({Key? key}) : super(key: key);
+class VerifyEmpEmail extends StatefulWidget {
+  const VerifyEmpEmail({Key? key}) : super(key: key);
 
   @override
-  State<VerifyEmail> createState() => _VerifyEmailState();
+  State<VerifyEmpEmail> createState() => _VerifyEmpEmailState();
 }
 
-class _VerifyEmailState extends State<VerifyEmail> {
+class _VerifyEmpEmailState extends State<VerifyEmpEmail> {
   bool isEmailVerified = false;
   Timer? timer;
   @override

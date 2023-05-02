@@ -43,7 +43,7 @@ class _EmpsignUpState extends State<EmpsignUp> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
-      VerifyEmail();
+      VerifyEmpEmail();
     } on FirebaseAuthException catch (e) {
       print(e);
       Utils.showSnackBar(e.message, Colors.red);

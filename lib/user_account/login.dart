@@ -55,8 +55,8 @@ class _LoginWidgetState extends State<LoginWidget> {
       //   print('..User iD is..${event?.uid}');
       // });
     } on FirebaseAuthException catch (e) {
-      //print(e);
       Utils.showSnackBar(e.message, Colors.red);
+      print(e.message);
     }
     Navigator.of(context).pop();
     // uid = FirebaseAuth.instance.currentUser?.uid;
@@ -64,6 +64,8 @@ class _LoginWidgetState extends State<LoginWidget> {
 
     // String auth = FirebaseAuth.instance.currentUser as String;
     // print(auth);
+
+    // request.auth != null;
   }
 
   @override

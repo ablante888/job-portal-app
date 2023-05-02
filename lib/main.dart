@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:project1/Employers/Employers_account/emp_register.dart';
+import 'package:project1/Employers/emp_profile/emp_form.dart';
 import 'package:project1/hompage.dart';
 import 'package:project1/profile/personal_info.dart';
 import 'package:project1/user_account/login.dart';
@@ -12,10 +14,12 @@ import '../user_account/verify_email.dart';
 import 'profile/education.dart';
 import 'profile/skills.dart';
 import 'profile/experience.dart';
-import 'job_seeker_home_page/profile_picture.dart';
+import 'job_seeker_home_page/jobSeekerHome.dart';
 import 'Employers/Employers_account/emp_auth_page.dart';
 import 'user_account/rgister.dart';
 import './loginOption.dart';
+import 'profile/job_seeker_profile.dart';
+import 'Employers/home_page/tabs_screen.dart';
 
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -52,9 +56,14 @@ class MyApp extends StatelessWidget {
         EducationForm.routeName: (context) => EducationForm(),
         SkillSet.routeName: (context) => SkillSet(),
         Experience.routeName: (context) => Experience(),
-        profilePicture.routeName: ((context) => profilePicture()),
+        home.routeName: ((context) => home()),
         Register.routeName: (context) => Register(),
-        loginOption.routeName: ((context) => loginOption())
+        loginOption.routeName: ((context) => loginOption()),
+        ProfilePage.routeName: (context) => ProfilePage(),
+        EmpRegister.routeName: ((context) => EmpRegister()),
+        EmployerRegistrationForm.routeName: ((context) =>
+            EmployerRegistrationForm()),
+        TabsScreen.routeName: ((context) => TabsScreen()),
       },
     );
   }
@@ -166,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 200,
               margin: EdgeInsets.all(20),
               child: FloatingActionButton(
+                heroTag: "btn1",
                 // clipBehavior: Clip.hardEdge,
                 onPressed: () =>
                     Navigator.pushNamed(context, Register.routeName),
@@ -181,8 +191,9 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 200,
               margin: EdgeInsets.all(20),
               child: FloatingActionButton(
+                heroTag: "btn2",
                 onPressed: () =>
-                    Navigator.pushNamed(context, EmpAuthPage.routName),
+                    Navigator.pushNamed(context, EmpRegister.routeName),
                 child: Text('RECRUITER'),
                 // textColor: Colors.white,
                 // color: Colors.deepPurple,

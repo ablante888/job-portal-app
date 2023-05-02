@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project1/Employers/Employers_account/emp_register.dart';
+import 'package:project1/user_account/rgister.dart';
 import 'user_account/auth_page.dart';
 import 'Employers/Employers_account/emp_auth_page.dart';
 
@@ -109,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: () =>
-                    Navigator.pushNamed(context, AuthPage.routName),
+                    Navigator.pushNamed(context, Register.routeName),
                 child: Text('JOB SEEKER'),
                 // textColor: Colors.white,
                 // color: Colors.deepPurple,
@@ -123,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.all(20),
               child: ElevatedButton(
                 onPressed: () =>
-                    Navigator.pushNamed(context, EmpAuthPage.routName),
+                    Navigator.pushNamed(context, EmpRegister.routeName),
                 child: Text('RECRUITER'),
                 // textColor: Colors.white,
                 // color: Colors.deepPurple,
@@ -146,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         // shape: RoundedRectangleBorder(
                         //     borderRadius: BorderRadius.circular(50)),
                         onPressed: () =>
-                            Navigator.pushNamed(context, EmpAuthPage.routName),
+                            Navigator.pushNamed(context, EmpRegister.routeName),
                         child: Text(
                           'Login',
                           style: TextStyle(color: Colors.blue),

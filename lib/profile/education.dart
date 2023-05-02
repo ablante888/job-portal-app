@@ -65,13 +65,28 @@ class _EducationFormState extends State<EducationForm> {
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding:
+                const EdgeInsets.only(top: 40, bottom: 10, right: 15, left: 15),
             child: Form(
               key: _formKey,
               child: Column(
+                //  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                 children: [
                   Container(
-                    child: Text('Tell us about your educational backgoung'),
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 39, 176, 39),
+                    ),
+                    child: Text(
+                      'Educational background',
+                      style: TextStyle(
+                          fontSize: 40,
+                          // fontWeight: FontWeight.bold,
+                          fontFamily: 'Anton',
+                          color: Colors.white),
+                    ),
                   ),
                   Text('Highest Education Level'),
                   DropdownButtonFormField(
@@ -212,22 +227,22 @@ class _EducationFormState extends State<EducationForm> {
                   ),
                   ElevatedButton.icon(
                     onPressed: () {
-                      // if (_formKey.currentState!.validate()) {
-                      //   _formKey.currentState?.save();
-                      //   final educationInfo = Education(
-                      //       GPA: Cgpa,
-                      //       levelOfEducation: eduLevelChoosed,
-                      //       institution: collageNameController.text,
-                      //       fieldOfStudy: fieldOfStudyChoosed,
-                      //       startDate: startDateSelected,
-                      //       endDate: endDateSelected);
-                      //   try {
-                      //     saveEducationInfo(educationInfo);
-                      //     Utils.showSnackBar('sucessfully saved', Colors.green);
-                      //   } on FirebaseException catch (e) {
-                      //     Utils.showSnackBar(e.message, Colors.red);
-                      //   }
-                      // }
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState?.save();
+                        final educationInfo = Education(
+                            GPA: Cgpa,
+                            levelOfEducation: eduLevelChoosed,
+                            institution: collageNameController.text,
+                            fieldOfStudy: fieldOfStudyChoosed,
+                            startDate: startDateSelected,
+                            endDate: endDateSelected);
+                        // try {
+                        //   saveEducationInfo(educationInfo);
+                        //   Utils.showSnackBar('sucessfully saved', Colors.green);
+                        // } on FirebaseException catch (e) {
+                        //   Utils.showSnackBar(e.message, Colors.red);
+                        // }
+                      }
 
                       Navigator.pushNamed(context, Experience.routeName);
                     },

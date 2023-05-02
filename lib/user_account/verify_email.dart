@@ -57,6 +57,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
     super.dispose();
   }
 
+//flutter run | grep -v "D/ViewRootImpl"
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
@@ -81,7 +82,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size.fromHeight(50)),
-                      onPressed: () {},
+                      onPressed: sendVerificationEmail,
                       icon: Icon(Icons.mail),
                       label: Text('Resend')),
                 ],

@@ -12,7 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import '../../firebase_options.dart';
 import 'package:email_validator/email_validator.dart';
 import 'emp_forgote_account.dart';
-import 'utils.dart';
+import 'empUtils.dart';
 
 class EmpLoginWidget extends StatefulWidget {
   final VoidCallback onclickedSignIn;
@@ -50,7 +50,7 @@ class _EmpLoginWidgetState extends State<EmpLoginWidget> {
           password: passwordController.text.trim());
     } on FirebaseAuthException catch (e) {
       print(e);
-      Utils.showSnackBar(e.message);
+      EmpUtils.showSnackBar(e.message, Colors.red);
     }
     Navigator.of(context).pop();
   }
@@ -72,13 +72,13 @@ class _EmpLoginWidgetState extends State<EmpLoginWidget> {
                   controller: companyNameController,
                   keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(label: Text('company name')),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 TextFormField(
                   controller: taxIdController,
                   keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(label: Text('Tax ID')),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  //autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 TextFormField(
                   controller: emailController,

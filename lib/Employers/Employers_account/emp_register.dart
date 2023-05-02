@@ -22,7 +22,7 @@ class _EmpRegisterState extends State<EmpRegister> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData)
-            return VerifyEmail();
+            return VerifyEmpEmail();
           else
             return EmpAuthPage();
         },

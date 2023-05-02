@@ -1,3 +1,5 @@
+//import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import './education.dart';
@@ -77,13 +79,14 @@ class _personal_infoState extends State<personal_info> {
         child: SingleChildScrollView(
           child: Container(
             width: double.infinity,
-            height: MediaQuery.of(context).size.height,
+            // height: MediaQuery.of(context).size.height,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Form(
                 key: _formKey,
-                child: ListView(
+                child: Column(
                   // crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Center(child: Text('First Name *')),
                     TextFormField(
@@ -342,33 +345,35 @@ class _personal_infoState extends State<personal_info> {
                         phoneNumber = value.toString();
                       },
                     ),
-                    SizedBox(
-                      height: 16,
-                    ),
+                    // SizedBox(
+                    //   height: 16,
+                    // ),
                     //  ElevatedButton(onPressed: () {}, child: Text('Save')),
                     ElevatedButton.icon(
                         onPressed: () {
-                          // if (_formKey.currentState!.validate()) {
-                          //   _formKey.currentState?.save();
-                          //   final personal_info = PersonalInfo(
-                          //       firstName: firstName,
-                          //       lastName: LastName,
-                          //       gender: genderChoosed,
-                          //       city: cityName,
-                          //       region: regionChoosed,
-                          //       email: email,
-                          //       phoneNumber: phoneNumber);
-                          //   try {
-                          //     savePesonalInfo(personal_info);
-                          //     Utils.showSnackBar(
-                          //         'sucessfully saved', Colors.green);
-                          //   } on FirebaseException catch (e) {
-                          //     Utils.showSnackBar(e.message, Colors.red);
-                          //   }
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState?.save();
+                            final personal_info = PersonalInfo(
+                                firstName: firstName,
+                                lastName: LastName,
+                                gender: genderChoosed,
+                                city: cityName,
+                                region: regionChoosed,
+                                email: email,
+                                phoneNumber: phoneNumber);
+                            // try {
+                            //   savePesonalInfo(personal_info);
+                            //   Utils.showSnackBar(
+                            //       'sucessfully saved', Colors.green);
+                            // } on FirebaseException catch (e) {
+                            //   Utils.showSnackBar(e.message, Colors.red);
+                            // }
 
-                          Navigator.pushNamed(context, EducationForm.routeName);
-                          // }
+                            Navigator.pushNamed(
+                                context, EducationForm.routeName);
+                          }
                         },
+                        style: ButtonStyle(),
                         icon: Icon(Icons.navigate_next),
                         label: Text('Save and continue')),
                     SizedBox(

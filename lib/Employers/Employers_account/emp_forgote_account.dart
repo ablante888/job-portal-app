@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:email_validator/email_validator.dart';
-import 'utils.dart';
+import 'empUtils.dart';
 
 class ForgotePassword extends StatefulWidget {
   const ForgotePassword({Key? key}) : super(key: key);
@@ -27,10 +27,10 @@ class _ForgotePasswordState extends State<ForgotePassword> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
-      Utils.showSnackBar('password reset mail sent');
+      EmpUtils.showSnackBar('password reset mail sent', Colors.red);
     } on FirebaseAuthException catch (e) {
       print(e);
-      Utils.showSnackBar(e.message);
+      EmpUtils.showSnackBar(e.message, Colors.red);
     }
   }
 
