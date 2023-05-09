@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-// // class Posted_jobs extends StatefulWidget {
-// //   const Posted_jobs({Key? key}) : super(key: key);
+// // class Manage_posts extends StatefulWidget {
+// //   const Manage_posts({Key? key}) : super(key: key);
 
 // //   @override
-// //   State<Posted_jobs> createState() => _Posted_jobsState();
+// //   State<Manage_posts> createState() => _Manage_postsState();
 // // }
 
-// // class _Posted_jobsState extends State<Posted_jobs> {
+// // class _Manage_postsState extends State<Manage_posts> {
 // //   @override
 // //   Widget build(BuildContext context) {
 // //     return Container(
@@ -23,18 +23,19 @@ import 'package:flutter/src/widgets/framework.dart';
 // // }
 // import 'package:flutter/material.dart';
 
-// //void main() => runApp(Posted_jobs());
+// //void main() => runApp(Manage_posts());
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/jobs_model.dart';
 
-class Posted_jobs extends StatefulWidget {
+class Manage_posts extends StatefulWidget {
+  static const routeName = 'Manage_posts';
   @override
-  _Posted_jobsState createState() => _Posted_jobsState();
+  _Manage_postsState createState() => _Manage_postsState();
 }
 
-class _Posted_jobsState extends State<Posted_jobs> {
+class _Manage_postsState extends State<Manage_posts> {
   String getCurrentUserUid() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -54,8 +55,8 @@ class _Posted_jobsState extends State<Posted_jobs> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('employer')
-            .doc(getCurrentUserUid())
+            .collection('employers-job-postings')
+            .doc('post-id')
             .collection('job posting')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -67,7 +68,7 @@ class _Posted_jobsState extends State<Posted_jobs> {
               return SafeArea(
                 child: SingleChildScrollView(
                   child: SizedBox(
-                    height: 450,
+                    height: 600,
                     child: new ListView(
                       padding:
                           EdgeInsets.symmetric(horizontal: 5, vertical: 10),
@@ -89,7 +90,28 @@ class _Posted_jobsState extends State<Posted_jobs> {
                               ),
                               //  leading: new Text(document['job category']),
                               title: new Text(document['title']),
-                              subtitle: new Text(document['description']),
+                              subtitle: Container(
+                                  width: 20,
+                                  child: new Text(document['description'])),
+                              trailing: Container(
+                                width: 100,
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Theme.of(context).primaryColor,
+                                        )),
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Theme.of(context).errorColor,
+                                        ))
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         );
@@ -105,12 +127,12 @@ class _Posted_jobsState extends State<Posted_jobs> {
   }
 }
 
-// class Posted_jobs extends StatefulWidget {
+// class Manage_posts extends StatefulWidget {
 //   @override
-//   _Posted_jobsState createState() => _Posted_jobsState();
+//   _Manage_postsState createState() => _Manage_postsState();
 // }
 
-// class _Posted_jobsState extends State<Posted_jobs> {
+// class _Manage_postsState extends State<Manage_posts> {
 //   String getCurrentUserUid() {
 //     User? user = FirebaseAuth.instance.currentUser;
 //     if (user != null) {
@@ -182,3 +204,24 @@ class _Posted_jobsState extends State<Posted_jobs> {
 //     );
 //   }
 // }
+
+
+//  trailing: Container(
+//                         width: 50,
+//                         child: Row(
+//                           children: [
+//                             IconButton(
+//                                 onPressed: () {},
+//                                 icon: Icon(
+//                                   Icons.edit,
+//                                   color: Theme.of(context).primaryColor,
+//                                 )),
+//                             IconButton(
+//                                 onPressed: () {},
+//                                 icon: Icon(
+//                                   Icons.delete,
+//                                   color: Theme.of(context).errorColor,
+//                                 ))
+//                           ],
+//                         ),
+//                       ),

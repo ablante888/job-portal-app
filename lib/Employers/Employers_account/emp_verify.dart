@@ -18,6 +18,7 @@ class VerifyEmpEmail extends StatefulWidget {
 
 class _VerifyEmpEmailState extends State<VerifyEmpEmail> {
   bool isEmailVerified = false;
+  bool canResendEmail = false;
   Timer? timer;
   @override
   void initState() {
@@ -33,6 +34,13 @@ class _VerifyEmpEmailState extends State<VerifyEmpEmail> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       await user?.sendEmailVerification();
+      setState(() {
+        canResendEmail = false;
+      });
+      await Future.delayed(Duration(seconds: 3));
+      setState(() {
+        canResendEmail = true;
+      });
       timer = Timer.periodic(
         Duration(seconds: 3),
         (Timer) => chekEmailVerified(),
@@ -81,9 +89,23 @@ class _VerifyEmpEmailState extends State<VerifyEmpEmail> {
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size.fromHeight(50)),
-                      onPressed: () {},
+                      onPressed: canResendEmail ? sendVerificationEmail : null,
                       icon: Icon(Icons.mail),
                       label: Text('Resend')),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50)),
+                    onPressed: () => FirebaseAuth.instance.signOut(),
+                    // icon: Icon(Icons.mail),
+                    // label: Text('Resend')
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
                 ],
               ),
             ),

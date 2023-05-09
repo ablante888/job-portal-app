@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class VerifyEmail extends StatefulWidget {
 
 class _VerifyEmailState extends State<VerifyEmail> {
   bool isEmailVerified = false;
+  bool canResendEmail = false;
   Timer? timer;
   @override
   void initState() {
@@ -33,6 +35,13 @@ class _VerifyEmailState extends State<VerifyEmail> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       await user?.sendEmailVerification();
+      setState(() {
+        canResendEmail = false;
+      });
+      await Future.delayed(Duration(seconds: 3));
+      setState(() {
+        canResendEmail = true;
+      });
       timer = Timer.periodic(
         Duration(seconds: 3),
         (Timer) => chekEmailVerified(),
@@ -58,6 +67,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
 //flutter run | grep -v "D/ViewRootImpl"
+
   @override
   Widget build(BuildContext context) {
     return isEmailVerified
@@ -82,9 +92,23 @@ class _VerifyEmailState extends State<VerifyEmail> {
                   ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                           minimumSize: Size.fromHeight(50)),
-                      onPressed: sendVerificationEmail,
+                      onPressed: canResendEmail ? sendVerificationEmail : null,
                       icon: Icon(Icons.mail),
                       label: Text('Resend')),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50)),
+                    onPressed: () => FirebaseAuth.instance.signOut(),
+                    // icon: Icon(Icons.mail),
+                    // label: Text('Resend')
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
                 ],
               ),
             ),

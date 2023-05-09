@@ -1,11 +1,13 @@
 //import 'dart:html';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:project1/Employers/emp_profile/emp_form.dart';
 
 class Emp_home extends StatefulWidget {
+  static const routeName = '/Emp_home';
   const Emp_home({Key? key}) : super(key: key);
 
   @override
@@ -44,6 +46,21 @@ class _Emp_homeState extends State<Emp_home> {
                     icon: Icon(Icons.book),
                     label: Text('Fill your company information')),
               ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: (MediaQuery.of(context).size.width) * 1 / 2,
+                child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50)),
+                    onPressed: () => FirebaseAuth.instance.signOut(),
+                    icon: Icon(
+                      Icons.logout_rounded,
+                      size: 36,
+                    ),
+                    label: Text('Sign out')),
+              )
             ],
           ),
         ));

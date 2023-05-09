@@ -26,7 +26,7 @@ class Company {
     required this.description,
     required this.industry,
     required this.companySize,
-    this.logoUrl = '',
+    required this.logoUrl,
   });
 
   factory Company.fromJson(Map<String, dynamic> json) {
@@ -67,10 +67,12 @@ class Company {
 
 //Job Post Model
 class JobPost {
+  DateTime timePosted;
+  String JobId;
   String title;
   String category;
   String description;
-  String requirements;
+  List requirements;
 
   String salary;
   String employmentType;
@@ -81,6 +83,8 @@ class JobPost {
   Company company;
 
   JobPost({
+    required this.timePosted,
+    required this.JobId,
     required this.title,
     required this.category,
     required this.description,
@@ -96,6 +100,8 @@ class JobPost {
 
   factory JobPost.fromJson(Map<String, dynamic> json) {
     return JobPost(
+      timePosted: json['posted time'],
+      JobId: json['job id'],
       title: json['title'],
       description: json['description'],
       requirements: json['requirements'],
@@ -112,6 +118,8 @@ class JobPost {
 
   Map<String, dynamic> toJson() {
     return {
+      'posted time': timePosted,
+      'job id': JobId,
       'title': title,
       'description': description,
       'requirements': requirements,

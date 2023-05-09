@@ -1,34 +1,48 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:project1/profile/experience.dart';
+import 'package:provider/provider.dart';
 
 class JobSeekerProfile {
+  String profileId;
   final PersonalInfo personalInfo;
   // final List<Education> education;
   // final List<ExperienceModel> experience;
   // final List<Skill> skills;
   final Education education;
   final ExperienceModel experience;
-  final List<Skill> skills;
+  final Skill skills;
+  final Other otherInfo;
   JobSeekerProfile({
+    required this.profileId,
     required this.personalInfo,
     required this.education,
     required this.experience,
     required this.skills,
+    required this.otherInfo,
     // this.education = const [],
     // this.experience = const [],
     // this.skills = const [],
   });
   factory JobSeekerProfile.fromMap(Map<String, dynamic> data) {
     return JobSeekerProfile(
-      personalInfo: data['email'],
-      education: Education.fromMap(data['education']),
-      experience: ExperienceModel.fromMap(data['experience']),
-      skills:
-          List<Skill>.from(data['skills'].map((skill) => Skill.fromMap(skill))),
-    );
+        profileId: json.decode('profile id'),
+        personalInfo: PersonalInfo.fromJeson(data['personal info']),
+        education: Education.fromMap(data['education']),
+        experience: ExperienceModel.fromMap(data['experience']),
+        skills: Skill.fromMap(data['skills']),
+        otherInfo: Other.fromMap(data['other info']));
   }
+  Map<String, dynamic> toJeson() => {
+        'profile id': profileId,
+        'personal info': personalInfo.toJeson(),
+        'education': education.toJeson(),
+        'experience': experience.toJeson(),
+        'skills': Skill,
+        'region': Other,
+      };
 }
 
 class PersonalInfo {
@@ -71,20 +85,20 @@ class PersonalInfo {
 }
 
 class Education {
-  final String levelOfEducation;
-  final String institution;
-  final String fieldOfStudy;
-  final String startDate;
-  final String endDate;
-  final String GPA;
+  String? levelOfEducation;
+  String? institution;
+  String? fieldOfStudy;
+  String? startDate;
+  String? endDate;
+  String? GPA;
 
   Education({
     this.GPA = '',
-    required this.levelOfEducation,
-    required this.institution,
-    required this.fieldOfStudy,
-    required this.startDate,
-    required this.endDate,
+    this.levelOfEducation,
+    this.institution,
+    this.fieldOfStudy,
+    this.startDate,
+    this.endDate,
   });
   Map<String, dynamic> toJeson() => {
         'levelOfEducation': levelOfEducation,
@@ -102,20 +116,20 @@ class Education {
 }
 
 class ExperienceModel {
-  final String title;
-  final String company;
-  final DateTime startDate;
-  final DateTime endDate;
-  String region;
-  String city;
+  String? title;
+  String? company;
+  DateTime? startDate;
+  DateTime? endDate;
+  String? region;
+  String? city;
 
   ExperienceModel({
-    required this.title,
-    required this.company,
-    required this.startDate,
-    required this.endDate,
-    required this.region,
-    required this.city,
+    this.title,
+    this.company,
+    this.startDate,
+    this.endDate,
+    this.region,
+    this.city,
   });
   Map<String, dynamic> toJeson() => {
         'job title': title,
@@ -135,13 +149,10 @@ class ExperienceModel {
 }
 
 class Skill {
-  final List<String> professionalSkills;
-  final List<String> personalSkills;
-  final List<String> languageSkills;
-  Skill(
-      {required this.languageSkills,
-      required this.personalSkills,
-      required this.professionalSkills});
+  List<String>? professionalSkills;
+  List<String>? personalSkills;
+  List<String>? languageSkills;
+  Skill({this.languageSkills, this.personalSkills, this.professionalSkills});
   Map<String, dynamic> toJeson() => {
         'professional skills': professionalSkills,
         'personal skills': personalSkills,
@@ -153,6 +164,20 @@ class Skill {
       professionalSkills: json['professional skills']);
 }
 
+class Other {
+  String? aboutMe;
+  String? imageUrl;
+  Other({this.aboutMe, this.imageUrl});
+  factory Other.fromMap(Map<String, dynamic> json) => Other(
+        aboutMe: json['language skills'],
+        imageUrl: json['personal skills'],
+      );
+  Map<String, dynamic> toJeson() => {
+        'about me': aboutMe,
+        'profile image': imageUrl,
+        //  'language skills': languageSkills,
+      };
+}
 // class EducationProvider extends ChangeNotifier{
 //   late String _degree;
 //   late String _institution;
@@ -165,6 +190,58 @@ class Skill {
 //      required String fieldOfStudy,
 //     required String startDate,
 //     required String endDate,
-//   }) 
+//   })
 //   set eduaction(String levelOfEducation,String institution,String fieldOfStudy, String startDate,String endDate){}
 // }
+
+class PersonalInfoProvider extends ChangeNotifier {
+  PersonalInfo _personalInfo = PersonalInfo();
+
+  PersonalInfo get personalInfo => _personalInfo;
+
+  set personalInfo(PersonalInfo value) {
+    _personalInfo = value;
+    notifyListeners();
+  }
+}
+
+class EducationProvider extends ChangeNotifier {
+  Education _education = Education();
+  Education get education => _education;
+
+  set education(Education value) {
+    _education = value;
+    notifyListeners();
+  }
+}
+
+class ExperienceProvider extends ChangeNotifier {
+  ExperienceModel _experience = ExperienceModel();
+
+  ExperienceModel get experience => _experience;
+
+  set experience(ExperienceModel value) {
+    _experience = value;
+    notifyListeners();
+  }
+}
+
+class SkillProvider extends ChangeNotifier {
+  Skill _skill = Skill();
+
+  Skill get skill => _skill;
+
+  set skill(Skill value) {
+    _skill = value;
+    notifyListeners();
+  }
+}
+
+class otherProvider extends ChangeNotifier {
+  Other _otherInfo = Other();
+  Other get otherInfo => _otherInfo;
+  set otherInfo(Other value) {
+    _otherInfo = value;
+    notifyListeners();
+  }
+}

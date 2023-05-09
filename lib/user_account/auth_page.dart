@@ -12,7 +12,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  bool isLogin = true;
+  bool isLogin = false;
   void toggle() {
     setState(() {
       isLogin = !isLogin;

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:project1/Employers/home_page/tabs_screen.dart';
 import 'package:project1/Employers/models/jobs_model.dart';
-
 import './compLogo_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,9 +24,9 @@ class EmployerRegistrationForm extends StatefulWidget {
 class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
   File? _image;
   void _onImageSelected(File image) {
-    _image;
     setState(() {
       _image = image;
+      //  companyLogo = url;
     });
   }
 
@@ -39,16 +39,38 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
     }
   }
 
-  Future savePesonalInfo(Company companyInfonfo) async {
+  void printImagePath() {
+    print('your image path is : ${_image}');
+  }
+
+  Future saveEmployerInfo(Company companyInfonfo) async {
     final emp_document_ref = FirebaseFirestore.instance
-        .collection('Employer')
+        .collection('employer')
         .doc(getCurrentUserUid());
+    final emp_profile_ref =
+        emp_document_ref.collection('company profile').doc('profile');
     _companyId = emp_document_ref.id;
     final json = companyInfonfo.toJson();
-    await emp_document_ref
+    await emp_profile_ref
         // .collection('Employer profile')
         // .doc('personal_info')
         .set(json);
+  }
+
+  String? _uploadedFileURL;
+
+  Future<void> _uploadFile() async {
+    final FirebaseStorage storage = FirebaseStorage.instance;
+    final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    final Reference reference =
+        storage.ref().child('images/Employers/$fileName');
+    final UploadTask uploadTask = reference.putFile(_image!);
+    final TaskSnapshot downloadUrl = (await uploadTask);
+    final String url = (await downloadUrl.ref.getDownloadURL());
+    setState(() {
+      _uploadedFileURL = url;
+      companyLogo = url;
+    });
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -66,7 +88,7 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
   String comapnyDesription = '';
   String _IndustryTypeselected = '';
   String companySzeSelected = '';
-  String companyLogo = 'no image';
+  String? companyLogo;
 
   List<String> _dropdownItems = [
     'Option 1',
@@ -75,6 +97,7 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
   ];
   @override
   Widget build(BuildContext context) {
+    // printImagePath();
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -540,6 +563,7 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
                           });
                         }),
                   ),
+                  // CompanyLogoPicker(onImageSelected: _onImageSelected),
                   CompanyLogoPicker(onImageSelected: _onImageSelected),
                   SizedBox(
                     height: 20,
@@ -552,28 +576,35 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState?.save();
-                            final companyInfo = Company(
-                                companyId: _companyId,
-                                name: companyName,
-                                address: _streetAddress,
-                                city: _city,
-                                state: _state,
-                                country: _country,
-                                phone: phoneNumber,
-                                email: email,
-                                website: companyWebsite,
-                                description: comapnyDesription,
-                                industry: _IndustryTypeselected,
-                                companySize: companySzeSelected,
-                                logoUrl: companyLogo);
-                            try {
-                              savePesonalInfo(companyInfo);
-                              EmpUtils.showSnackBar(
-                                  'sucessfully saved', Colors.green);
-                            } on FirebaseException catch (e) {
-                              EmpUtils.showSnackBar(e.message, Colors.red);
-                            }
-                            Navigator.pushNamed(context, TabsScreen.routeName);
+                            //   _uploadFile();
+                            // final companyInfo = Company(
+                            //     companyId: _companyId,
+                            //     name: companyName,
+                            //     address: _streetAddress,
+                            //     city: _city,
+                            //     state: _state,
+                            //     country: _country,
+                            //     phone: phoneNumber,
+                            //     email: email,
+                            //     website: companyWebsite,
+                            //     description: comapnyDesription,
+                            //     industry: _IndustryTypeselected,
+                            //     companySize: companySzeSelected,
+                            //     logoUrl: companyLogo);
+                            // try {
+                            //   saveEmployerInfo(companyInfo);
+
+                            //   EmpUtils.showSnackBar(
+                            //       'sucessfully saved', Colors.green);
+                            // } on FirebaseException catch (e) {
+                            //   EmpUtils.showSnackBar(e.message, Colors.red);
+                            // }
+                            Navigator.pushNamed(
+                              context,
+                              TabsScreen.routeName,
+                            );
+                            //   Navigator.pushNamed(context, TabsScreen.routeName,
+                            // arguments: companyInfo);
                           }
                         },
                         icon: Icon(Icons.arrow_forward),

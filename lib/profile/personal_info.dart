@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import './education.dart';
-import '../models/job_seeker_profile_model.dart';
-import '../models/job_seeker_profile_model.dart';
+import '../jobSeekerModel/job_seeker_profile_model.dart';
+import '../jobSeekerModel/job_seeker_profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../user_account/utils.dart';
@@ -18,7 +18,7 @@ class personal_info extends StatefulWidget {
 
 class _personal_infoState extends State<personal_info> {
   final _formKey = GlobalKey<FormState>();
-
+  User? user = FirebaseAuth.instance.currentUser;
 // Get the current user's UID
   String getCurrentUserUid() {
     User? user = FirebaseAuth.instance.currentUser;
@@ -73,7 +73,7 @@ class _personal_infoState extends State<personal_info> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Applicant form'),
+        title: Text('personal information'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -89,67 +89,75 @@ class _personal_infoState extends State<personal_info> {
                   // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Center(child: Text('First Name *')),
-                    TextFormField(
-                      controller: firstNameController,
-                      decoration: InputDecoration(
-                        labelText: 'First name',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        controller: firstNameController,
+                        decoration: InputDecoration(
+                          labelText: 'First name',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter Your name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            firstName = value;
+                          }
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter Your name';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        if (value != null) {
-                          firstName = value;
-                        }
-                      },
                     ),
 
                     SizedBox(height: 16.0),
-                    TextFormField(
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: 'Last name',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        keyboardType: TextInputType.name,
+                        decoration: InputDecoration(
+                          labelText: 'Last name',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter your last name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            LastName = value;
+                          }
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter your last name';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        if (value != null) {
-                          LastName = value;
-                        }
-                      },
                     ),
                     SizedBox(height: 16.0),
                     Text(
@@ -157,202 +165,228 @@ class _personal_infoState extends State<personal_info> {
                       style: TextStyle(
                           fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
-                    DropdownButtonFormField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: DropdownButtonFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            filled: true,
+                            fillColor: Color.fromARGB(255, 161, 200, 231),
+                            hintText: 'Select an option',
+                            hintStyle: TextStyle(color: Colors.white),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                           ),
-                          filled: true,
-                          fillColor: Colors.blue,
-                          hintText: 'Select an option',
-                          hintStyle: TextStyle(color: Colors.white),
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        ),
-                        validator: ((value) {
-                          if (value == null) {
-                            return 'please select an option';
-                          }
-                        }),
-                        // value: genderChoosed,
-                        items: gender.map((item) {
-                          return DropdownMenuItem(
-                            child: Text(item),
-                            value: item,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            genderChoosed = value.toString();
-                          });
-                        }),
+                          validator: ((value) {
+                            if (value == null) {
+                              return 'please select an option';
+                            }
+                          }),
+                          // value: genderChoosed,
+                          items: gender.map((item) {
+                            return DropdownMenuItem(
+                              child: Text(item),
+                              value: item,
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              genderChoosed = value.toString();
+                            });
+                          }),
+                    ),
                     SizedBox(height: 16.0),
 
                     Center(child: Text('Country *')),
-                    TextFormField(
-                      // controller: firstNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Country',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        // controller: firstNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Country',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter Your Country name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            countryName = value;
+                          }
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter Your Country name';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        if (value != null) {
-                          countryName = value;
-                        }
-                      },
                     ),
                     Center(child: Text('Region *')),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Region',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Region',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter your Region';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            regionChoosed = value;
+                          }
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter your Region';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        if (value != null) {
-                          regionChoosed = value;
-                        }
-                      },
                     ),
                     SizedBox(
                       height: 16,
                     ),
                     Center(child: Text('City(Home Town) *')),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'city name',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'city name',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter your city name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          if (value != null) {
+                            cityName = value;
+                          }
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter your city name';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        if (value != null) {
-                          cityName = value;
-                        }
-                      },
                     ),
                     SizedBox(
                       height: 16,
                     ),
                     Center(child: Text('Contact information *')),
-                    TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email address',
-                        prefixIcon: Icon(Icons.email),
-                        border: OutlineInputBorder(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'Enter your email address',
+                          prefixIcon: Icon(Icons.email),
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          email = value.toString();
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        email = value.toString();
-                      },
                     ),
                     SizedBox(
                       height: 16,
                     ),
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'phone number',
-                        labelStyle: TextStyle(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'phone number',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        style: TextStyle(
                           color: Colors.grey[800],
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please enter your phone number';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          //Do something when the value changes
+                          phoneNumber = value.toString();
+                        },
                       ),
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter your phone number';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        //Do something when the value changes
-                        phoneNumber = value.toString();
-                      },
                     ),
-                    // SizedBox(
-                    //   height: 16,
-                    // ),
+                    SizedBox(
+                      height: 16,
+                    ),
                     //  ElevatedButton(onPressed: () {}, child: Text('Save')),
                     ElevatedButton.icon(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState?.save();
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState?.save();
+
+                          try {
                             final personal_info = PersonalInfo(
                                 firstName: firstName,
                                 lastName: LastName,
@@ -361,21 +395,35 @@ class _personal_infoState extends State<personal_info> {
                                 region: regionChoosed,
                                 email: email,
                                 phoneNumber: phoneNumber);
-                            // try {
-                            //   savePesonalInfo(personal_info);
-                            //   Utils.showSnackBar(
-                            //       'sucessfully saved', Colors.green);
-                            // } on FirebaseException catch (e) {
-                            //   Utils.showSnackBar(e.message, Colors.red);
-                            // }
-
-                            Navigator.pushNamed(
-                                context, EducationForm.routeName);
+                            PersonalInfoProvider provider =
+                                PersonalInfoProvider();
+                            provider.personalInfo = personal_info;
+                            //  savePesonalInfo(personal_info);
+                            Utils.showSnackBar(
+                                'sucessfully saved', Colors.green);
+                          } on FirebaseException catch (e) {
+                            Utils.showSnackBar(e.message, Colors.red);
                           }
-                        },
-                        style: ButtonStyle(),
-                        icon: Icon(Icons.navigate_next),
-                        label: Text('Save and continue')),
+
+                          Navigator.pushNamed(context, EducationForm.routeName);
+                        }
+                      },
+                      // style: ButtonStyle(),
+                      icon: Icon(Icons.forward),
+                      label: Text(
+                        'Save and continue',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        // primary: Colors.blue[900],
+                        padding: EdgeInsets.all(10.0),
+                        elevation: 10.0,
+                      ),
+                    ),
                     SizedBox(
                       height: 100,
                     ),

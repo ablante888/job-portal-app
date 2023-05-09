@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CompanyLogoPicker extends StatefulWidget {
-  final Function(File) onImageSelected;
+  final void Function(File) onImageSelected;
 
   CompanyLogoPicker({required this.onImageSelected});
 
@@ -14,30 +16,56 @@ class CompanyLogoPicker extends StatefulWidget {
 
 class _CompanyLogoPickerState extends State<CompanyLogoPicker> {
   File? _image;
-
+  String? imageUrl;
   final ImagePicker _picker = ImagePicker();
 
   Future getImageFromCamera() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
       });
       widget.onImageSelected(_image!);
+      print(_image);
     }
   }
 
   Future getImageFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
       });
       widget.onImageSelected(_image!);
+      print('your image path is :${_image}');
+      // widget.onImageSelected(_image);
     }
   }
+
+  _upload() async {
+    Reference storage =
+        FirebaseStorage.instance.ref().child("images/${_image!.path}");
+    if (_image != null) storage.putFile(_image!);
+  }
+
+  // String? _uploadedFileURL;
+
+  // Future<void> _uploadFile() async {
+  //   final FirebaseStorage storage = FirebaseStorage.instance;
+  //   final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  //   final Reference reference = storage.ref().child('images/$fileName');
+  //   final UploadTask uploadTask = reference.putFile(_image!);
+  //   final TaskSnapshot downloadUrl = (await uploadTask);
+  //   final String url = (await uploadTask.snapshot.ref.getDownloadURL());
+  //   setState(() {
+  //     _uploadedFileURL = url;
+  //   });
+  //   widget.onImageSelected(_image!, _uploadedFileURL);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +96,8 @@ class _CompanyLogoPickerState extends State<CompanyLogoPicker> {
                           title: Text('Choose from gallery'),
                           onTap: () {
                             getImageFromGallery();
+                            //_upload();
+                            // _uploadFile();
                             Navigator.pop(context);
                           },
                         ),

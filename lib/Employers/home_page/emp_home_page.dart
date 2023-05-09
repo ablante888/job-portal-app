@@ -1,3 +1,8 @@
+//import 'dart:html';
+
+import 'package:project1/Employers/manage_posts/manage_post.dart';
+import 'package:project1/Employers/models/jobs_model.dart';
+
 import '../emp_profile/emp_form.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -7,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'job_post_form.dart';
 
 class EmpHomePage extends StatefulWidget {
+  static const routeName = '/EmpHomePage';
   @override
   State<EmpHomePage> createState() => _EmpHomePageState();
 }
@@ -14,6 +20,7 @@ class EmpHomePage extends StatefulWidget {
 class _EmpHomePageState extends State<EmpHomePage> {
   @override
   Widget build(BuildContext context) {
+    final company_Object = ModalRoute.of(context)?.settings.arguments;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -84,13 +91,11 @@ class _EmpHomePageState extends State<EmpHomePage> {
             //   ),
             // ),
             //   Row(children: [],),
+
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => JobPostingForm(),
-                  ),
-                );
+                Navigator.pushNamed(context, JobPostingForm.routName,
+                    arguments: company_Object);
               },
               child: Text('Post a new Job'),
               style: ElevatedButton.styleFrom(
@@ -106,8 +111,10 @@ class _EmpHomePageState extends State<EmpHomePage> {
               height: 20,
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: Text('Edit Job'),
+              onPressed: () {
+                Navigator.of(context).pushNamed(Manage_posts.routeName);
+              },
+              child: Text('Manage Job'),
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),

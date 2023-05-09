@@ -1,5 +1,6 @@
 //import 'dart:html';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 //import 'package:flutter/src/foundation/key.dart';
 //import 'package:flutter/src/widgets/framework.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:project1/job_seeker_home_page/jobSeekerHome.dart';
 import '../firebase_options.dart';
 import 'package:email_validator/email_validator.dart';
 import 'forgote_password.dart';
@@ -24,48 +26,97 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
+      if (user != null) {
+        await checkUserRole(user.uid);
+        if (isJobSeeker) {
+          Navigator.pushNamed(context, home.routeName);
+        } else {
+          Utils.showSnackBar('Job seeker not found', Colors.red);
+          FirebaseAuth.instance.signOut();
+        }
+      }
+    });
+  }
+
   String? uid;
   late FirebaseAuth _outh;
   late Stream<User?> outhStateChange;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  bool isJobSeeker = false;
+  Future<void> checkUserRole(String uid) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    DocumentSnapshot userData = await FirebaseFirestore.instance
+        .collection('job-seeker')
+        .doc(user.uid)
+        .get();
+    if (userData.exists) {
+      String role = userData.get('role');
+      setState(() {
+        isJobSeeker = role == 'jobseeker';
+      });
+    }
+    //return isJobSeeker;
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
+  bool _showProgressIndicator = false;
   Future signIn() async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
-              child: CircularProgressIndicator(),
-            ));
+    setState(() {
+      _showProgressIndicator = true;
+    });
+    Visibility(
+      visible: _showProgressIndicator,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (context) => Center(
+    //           child: CircularProgressIndicator(),
+    //         ));
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
-      // if (FirebaseAuth.instance.currentUser != null) {
-      //    User user = FirebaseAuth.instance.currentUser;
+      // await checkUserRole();
+      // if (isJobSeeker) {
+      //   Navigator.pushNamed(context, home.routeName);
+      //   //  Navigator.of(context).pop();
+      //   // Utils.showSnackBar('Job seeker not found', Colors.red);
+      //   // FirebaseAuth.instance.signOut();
+      // } else {
+      //   Utils.showSnackBar('Job seeker not found', Colors.red);
+      //   FirebaseAuth.instance.signOut();
+      //   //  Navigator.of(context).pop();
       // }
-
-      // outhStateChange = _outh.authStateChanges();
-      // outhStateChange.listen((event) {
-      //   print('..User iD is..${event?.uid}');
-      // });
     } on FirebaseAuthException catch (e) {
       Utils.showSnackBar(e.message, Colors.red);
       print(e.message);
     }
-    Navigator.of(context).pop();
-    // uid = FirebaseAuth.instance.currentUser?.uid;
-    // print('User id is...${uid}');
-
-    // String auth = FirebaseAuth.instance.currentUser as String;
-    // print(auth);
-
-    // request.auth != null;
+    setState(() {
+      _showProgressIndicator = false;
+    });
+    // if (mounted) {
+    //   Navigator.of(context).pop();
+    // }
   }
 
   @override

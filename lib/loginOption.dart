@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project1/Employers/Employers_account/emp_register.dart';
+import 'package:project1/user_account/rgister.dart';
 import 'user_account/auth_page.dart';
 import 'Employers/Employers_account/emp_auth_page.dart';
 
@@ -61,13 +63,16 @@ class _loginOptionState extends State<loginOption> {
               onPressed: () {
                 if (_userType == UserType.jobSeeker) {
                   // Add job seeker login logic here
-                  Navigator.pushNamed(context, AuthPage.routName);
+                  // Navigator.pushNamed(context, AuthPage.routName);
+                  Navigator.pushNamed(context, Register.routeName);
                 } else {
                   // Add recruiter login logic here
-                  Navigator.pushNamed(context, EmpAuthPage.routName);
+                  //Navigator.pushNamed(context, EmpAuthPage.routName);
+                  Navigator.pushNamed(context, EmpRegister.routeName);
                 }
               },
-              child: Text('Login'),
+
+              child: Text('Login'), //make it change as user type is selected
             ),
           ],
         ),

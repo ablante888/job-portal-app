@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:project1/Employers/Employers_account/emp_register.dart';
+import 'package:project1/Employers/bridgeTOemp_home_page.dart';
 import 'package:project1/Employers/emp_profile/emp_form.dart';
+import 'package:project1/Employers/manage_posts/manage_post.dart';
 import 'package:project1/hompage.dart';
 import 'package:project1/profile/personal_info.dart';
 import 'package:project1/user_account/login.dart';
 import 'package:project1/user_account/utils.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
+import 'jobSeekerModel/job_seeker_profile_model.dart';
 import 'user_account/auth_page.dart';
 import '../user_account/verify_email.dart';
 import 'profile/education.dart';
@@ -20,6 +24,7 @@ import 'user_account/rgister.dart';
 import './loginOption.dart';
 import 'profile/job_seeker_profile.dart';
 import 'Employers/home_page/tabs_screen.dart';
+import 'Employers/home_page/job_post_form.dart';
 
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -31,12 +36,31 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(JobSeekerProfileWrapper());
 }
 
 // void main() {
 //   runApp(MyApp());
 // }
+class JobSeekerProfileWrapper extends StatelessWidget {
+  const JobSeekerProfileWrapper({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PersonalInfoProvider()),
+        // ChangeNotifierProvider.value(value: PersonalInfoProvider())
+        ChangeNotifierProvider(create: (_) => EducationProvider()),
+        ChangeNotifierProvider(create: (_) => ExperienceProvider()),
+        ChangeNotifierProvider(create: (_) => SkillProvider()),
+        ChangeNotifierProvider(create: (_) => otherProvider()),
+      ],
+      child: MyApp(),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -47,7 +71,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: Utils.messangerKey,
       title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue, errorColor: Colors.red),
+      theme: ThemeData(
+        primaryColor: Colors.indigo,
+        primarySwatch: Colors.blue,
+        errorColor: Colors.red,
+      ),
       home: MyHomePage(),
       routes: {
         AuthPage.routName: (context) => AuthPage(),
@@ -64,6 +92,9 @@ class MyApp extends StatelessWidget {
         EmployerRegistrationForm.routeName: ((context) =>
             EmployerRegistrationForm()),
         TabsScreen.routeName: ((context) => TabsScreen()),
+        JobPostingForm.routName: ((context) => JobPostingForm()),
+        Manage_posts.routeName: ((context) => Manage_posts()),
+        Emp_home.routeName: ((context) => Emp_home())
       },
     );
   }
@@ -220,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () => Navigator.pushNamed(
                                 context, loginOption.routeName),
                             child: Text(
-                              'job seeker Login',
+                              ' Login',
                               style: TextStyle(color: Colors.blue),
                             )),
                         // OutlinedButton(

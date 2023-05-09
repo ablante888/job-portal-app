@@ -8,7 +8,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:project1/models/job_seeker_profile_model.dart';
+import 'package:project1/jobSeekerModel/job_seeker_profile_model.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = '/user_profile';
@@ -19,136 +19,207 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<Map<String, dynamic>> profData = [];
-  Stream<Education> fetchEducationDataStream(DocumentReference docRef) {
-    return docRef.snapshots().map((snapshot) =>
-        Education.fromMap(snapshot.data()! as Map<String, dynamic>));
-  }
-
+  String? uid;
   String getCurrentUserUid() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      uid = user.uid;
       return user.uid;
     } else {
       return '';
     }
   }
 
-  Stream<List<dynamic>> fetchProfileDataStream(CollectionReference colRef) {
-    return colRef.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        if (doc.id == 'Education') {
-          return Education.fromMap(doc.data()! as Map<String, dynamic>);
-        } else if (doc.id == 'Experience') {
-          return ExperienceModel.fromMap(doc.data()! as Map<String, dynamic>);
-        }
-        // Add more if-else statements for other document types.
-        return null;
-      }).toList();
-    });
-  }
-
-  List<Map<String, dynamic>> dataList = [];
-  Future<void> getData() async {
-    final QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await FirebaseFirestore.instance
-            .collection('job-seeker')
-            .doc(getCurrentUserUid())
-            .collection('profile')
-            .get();
-    final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-        querySnapshot.docs;
-    for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in docs) {
-      print('${doc.id}=>${doc.data()}');
-      // List<Map<String, dynamic>> dataList = [];
-      docs.forEach((doc) {
-        dataList.add(doc.data());
-        print('${dataList[0]['summary']}');
-      });
-    }
-  }
-
-  Stream<List<dynamic>> getDataStream() {
-    return FirebaseFirestore.instance
+  Stream<QuerySnapshot> readProfile() {
+    FirebaseFirestore _db = FirebaseFirestore.instance;
+    Stream<QuerySnapshot> JobSeekerProfileStream = _db
         .collection('job-seeker')
         .doc(getCurrentUserUid())
-        .collection('profile')
-        .snapshots()
-        .map((querySnapshot) => querySnapshot.docs
-            .map((doc) {
-              final data = doc.data();
-              switch (doc.id) {
-                case 'Education':
-                  return Education.fromMap(data);
-                case 'Experience':
-                  return ExperienceModel.fromMap(data);
-                case 'Skills':
-                  return Skill.fromMap(data);
-                // add more cases as needed for other components
-                default:
-                  return null;
-              }
-            })
-            .where((component) => component != null)
-            .toList());
+        .collection('profie')
+        .snapshots();
+    return JobSeekerProfileStream;
   }
 
-  Stream<List<dynamic>> getProfiles() {
-    return FirebaseFirestore.instance
-        .collection('job-seeker')
-        .doc(getCurrentUserUid())
-        .collection('profile')
-        .snapshots()
-        .map((querySnapshot) => querySnapshot.docs
-            .map((doc) => Education.fromMap(doc.data()))
-            .toList());
-  }
-
-  // final docRef = FirebaseFirestore.instance
-  //     .collection('job_seeker')
-  //     .doc(getCurrentUserUid())
-  //     .collection('profile')
-  //     .doc('Education');
-//: if
-  //    request.auth != null
+  // final FirebaseFirestore _db = FirebaseFirestore.instance;
+  // Stream<QuerySnapshot> JobSeekerProfileStream =
+  //     _db.collection('job-seeker').doc().collection('profie').snapshots();
   @override
   Widget build(BuildContext context) {
-    getData();
     return Scaffold(
       appBar: AppBar(
-        title: Text('${dataList[0]['summary']}'),
+        title: Text('profile'),
       ),
-      body: StreamBuilder(
-        stream: getDataStream(),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+      body: StreamBuilder<QuerySnapshot>(
+          stream: readProfile(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          }
-
-          var data = snapshot.data as Education;
-
-          return ListView(
-            children: <Widget>[
-              ListTile(
-                title: Text('Degree'),
-                subtitle: Text(data.institution),
-              ),
-              ListTile(
-                title: Text('University'),
-                subtitle: Text(data.fieldOfStudy),
-              ),
-              // Add more list tiles as needed.
-            ],
-          );
-        },
-      ),
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            }
+            final List<QueryDocumentSnapshot> documents = snapshot.data!.docs;
+            final List<JobSeekerProfile> jobSeekerProfiles = documents
+                .map((doc) => JobSeekerProfile.fromMap(
+                    doc.data() as Map<String, dynamic>))
+                .toList();
+            return Column();
+          }),
     );
   }
 }
+// class ProfilePage extends StatefulWidget {
+//   static const routeName = '/user_profile';
+//   const ProfilePage({Key? key}) : super(key: key);
+
+//   @override
+//   State<ProfilePage> createState() => _ProfilePageState();
+// }
+
+// class _ProfilePageState extends State<ProfilePage> {
+//   List<Map<String, dynamic>> profData = [];
+//   // Stream<Education> fetchEducationDataStream(DocumentReference docRef) {
+//   //   return docRef.snapshots().map((snapshot) =>
+//   //       Education.fromMap(snapshot.data()! as Map<String, dynamic>));
+//   // }
+
+//   String getCurrentUserUid() {
+//     User? user = FirebaseAuth.instance.currentUser;
+//     if (user != null) {
+//       return user.uid;
+//     } else {
+//       return '';
+//     }
+//   }
+
+//   // Stream<List<dynamic>> fetchProfileDataStream(CollectionReference colRef) {
+//   //   return colRef.snapshots().map((snapshot) {
+//   //     return snapshot.docs.map((doc) {
+//   //       if (doc.id == 'Education') {
+//   //         return Education.fromMap(doc.data()! as Map<String, dynamic>);
+//   //       } else if (doc.id == 'Experience') {
+//   //         return ExperienceModel.fromMap(doc.data()! as Map<String, dynamic>);
+//   //       }
+//   //       // Add more if-else statements for other document types.
+//   //       return null;
+//   //     }).toList();
+//   //   });
+//   // }
+
+//   List<Map<String, dynamic>> dataList = [];
+//   Future<void> getData() async {
+//     final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+//         await FirebaseFirestore.instance
+//             .collection('job-seeker')
+//             .doc(getCurrentUserUid())
+//             .collection('profile')
+//             .get();
+//     final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+//         querySnapshot.docs;
+//     for (final DocumentSnapshot<Map<String, dynamic>> doc in docs) {
+//       print('${doc.id}=>${doc.data()}');
+//       // List<Map<String, dynamic>> dataList = [];
+//       docs.forEach((doc) {
+//         dataList.add(doc.data());
+//         print('${dataList[0]['summary']}');
+//         // if (doc.id.compareTo('Education') == 0) {
+//         //   final EducationObject = Education.fromMap(doc);
+//         //   print('your GPA is ${EducationObject.GPA}');
+
+//         // else if (doc.id.compareTo('Experience') == 0) {
+//         //   final ExperienceObject = ExperienceModel.fromMap(doc);
+//         //   print('your GPA is ${ExperienceObject.GPA}');
+//         // }
+//       });
+//     }
+//   }
+
+//   List<dynamic> myData = [];
+//   Stream<List<dynamic>> getDataStream() {
+//     return FirebaseFirestore.instance
+//         .collection('job-seeker')
+//         .doc(getCurrentUserUid())
+//         .collection('profile')
+//         .snapshots()
+//         .map((querySnapshot) => querySnapshot.docs
+//             .map((doc) {
+//               final data = doc.data();
+//               switch (doc.id) {
+//                 case 'Education':
+//                   return Education.fromMap(data);
+//                 //myData[0] = Education.fromMap(data);
+
+//                 case 'Experience':
+//                   return ExperienceModel.fromMap(data);
+//                 case 'Skills':
+//                   return Skill.fromMap(data);
+//                 // add more cases as needed for other components
+//                 default:
+//                   return null;
+//               }
+//             })
+//             .where((component) => component != null)
+//             .toList());
+//   }
+
+//   Stream<List<dynamic>> getProfiles() {
+//     return FirebaseFirestore.instance
+//         .collection('job-seeker')
+//         .doc(getCurrentUserUid())
+//         .collection('profile')
+//         .snapshots()
+//         .map((querySnapshot) => querySnapshot.docs
+//             .map((doc) => Education.fromMap(doc.data()))
+//             .toList());
+//   }
+
+//   // final docRef = FirebaseFirestore.instance
+//   //     .collection('job_seeker')
+//   //     .doc(getCurrentUserUid())
+//   //     .collection('profile')
+//   //     .doc('Education');
+// //: if
+//   //    request.auth != null
+//   @override
+//   Widget build(BuildContext context) {
+//     getData();
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('${dataList[0]['summary']}'),
+//       ),
+//       body: StreamBuilder(
+//         stream: getDataStream(),
+//         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+//           if (snapshot.hasError) {
+//             return Text('Error: ${snapshot.error}');
+//           }
+
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return CircularProgressIndicator();
+//           }
+
+//           var data = snapshot.data as Education;
+
+//           return ListView(
+//             children: <Widget>[
+//               ListTile(
+//                 title: Text('Degree'),
+//                 subtitle: Text(data.institution.toString()),
+//               ),
+//               ListTile(
+//                 title: Text('University'),
+//                 subtitle: Text(data.fieldOfStudy.toString()),
+//               ),
+//               // Add more list tiles as needed.
+//             ],
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }
 
 
 

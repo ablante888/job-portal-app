@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -40,9 +41,20 @@ class _signUpState extends State<signUp> {
               child: CircularProgressIndicator(),
             ));
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim());
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim())
+          .then((result) {
+        FirebaseFirestore.instance
+            .collection('job-seeker')
+            .doc(result.user!.uid)
+            .set({
+          'email': emailController.text,
+          'role': 'jobseeker', // or 'jobseeker'
+        });
+      });
+
       VerifyEmail();
     } on FirebaseAuthException catch (e) {
       print(e);

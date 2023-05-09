@@ -2,6 +2,7 @@
 
 //import 'dart:html';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -9,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:project1/Employers/bridgeTOemp_home_page.dart';
+import 'package:project1/Employers/home_page/emp_home_page.dart';
 import '../../firebase_options.dart';
 import 'package:email_validator/email_validator.dart';
 import 'emp_forgote_account.dart';
@@ -26,33 +29,96 @@ class EmpLoginWidget extends StatefulWidget {
 }
 
 class _EmpLoginWidgetState extends State<EmpLoginWidget> {
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((user) async {
+      if (user != null) {
+        await checkUserRole(user.uid);
+        if (isEmployer) {
+          Navigator.pushNamed(context, EmpHomePage.routeName);
+        } else {
+          EmpUtils.showSnackBar('Job seeker not found', Colors.red);
+          FirebaseAuth.instance.signOut();
+        }
+      }
+    });
+  }
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final companyNameController = TextEditingController();
   final taxIdController = TextEditingController();
 
+  bool isEmployer = false;
+  Future<void> checkUserRole(String uid) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    DocumentSnapshot userData = await FirebaseFirestore.instance
+        .collection('employer')
+        .doc(user.uid)
+        .get();
+    if (userData.exists) {
+      String role = userData.get('role');
+      setState(() {
+        isEmployer = role == 'employer';
+      });
+    }
+    //return isJobSeeker;
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
+  bool _showProgressIndicator = false;
   Future signIn() async {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
-              child: CircularProgressIndicator(),
-            ));
+    setState(() {
+      _showProgressIndicator = true;
+    });
+    Visibility(
+      visible: _showProgressIndicator,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (context) => Center(
+    //           child: CircularProgressIndicator(),
+    //         ));
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
+      // await checkUserRole();
+      // if (isJobSeeker) {
+      //   Navigator.pushNamed(context, home.routeName);
+      //   //  Navigator.of(context).pop();
+      //   // Utils.showSnackBar('Job seeker not found', Colors.red);
+      //   // FirebaseAuth.instance.signOut();
+      // } else {
+      //   Utils.showSnackBar('Job seeker not found', Colors.red);
+      //   FirebaseAuth.instance.signOut();
+      //   //  Navigator.of(context).pop();
+      // }
     } on FirebaseAuthException catch (e) {
-      print(e);
       EmpUtils.showSnackBar(e.message, Colors.red);
+      print(e.message);
     }
-    Navigator.of(context).pop();
+    setState(() {
+      _showProgressIndicator = false;
+    });
+    // if (mounted) {
+    //   Navigator.of(context).pop();
+    // }
   }
 
   @override
