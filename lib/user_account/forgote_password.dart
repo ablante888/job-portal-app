@@ -27,7 +27,7 @@ class _ForgotePasswordState extends State<ForgotePassword> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
-      Utils.showSnackBar('password reset mail sent', Colors.red);
+      Utils.showSnackBar('password reset mail sent', Colors.green);
     } on FirebaseAuthException catch (e) {
       print(e);
       Utils.showSnackBar(e.message, Colors.red);
@@ -52,7 +52,21 @@ class _ForgotePasswordState extends State<ForgotePassword> {
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(label: Text('Email')),
+                  decoration: InputDecoration(
+                    label: Text('Email'),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (email) =>
                       email != null && !EmailValidator.validate(email)

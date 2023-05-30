@@ -123,67 +123,158 @@ class _LoginWidgetState extends State<LoginWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('LOGIN'),
       ),
       body: Center(
         child: Container(
-          width: (MediaQuery.of(context).size.width) * 3 / 4,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(label: Text('Email')),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) =>
-                    email != null && !EmailValidator.validate(email)
-                        ? 'Enter a valid email'
-                        : null,
-              ),
-              TextField(
-                controller: passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                decoration: InputDecoration(label: Text('password')),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: Size.fromHeight(50)),
-                  onPressed: signIn,
-                  icon: Icon(Icons.lock_open),
-                  label: Text('Sign in')),
-              SizedBox(
-                height: 24,
-              ),
-              GestureDetector(
-                  child: Text(
-                    'forgote password',
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(255, 81, 152, 211),
+                Color.fromARGB(255, 81, 152, 211),
+              ],
+            ),
+          ),
+          child: Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Container(
+              padding: EdgeInsets.all(12),
+              width: (MediaQuery.of(context).size.width) * 3 / 4,
+              height: 400,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Welcome Again!',
                     style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Color.fromARGB(255, 255, 7, 172)),
+                      color: Colors.black,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      letterSpacing: 2.0,
+                      wordSpacing: 4.0,
+                      shadows: [
+                        Shadow(
+                          color: Color.fromARGB(255, 158, 158, 158),
+                          blurRadius: 2.0,
+                          offset: Offset(1.0, 1.0),
+                        ),
+                      ],
+                      // decoration: TextDecoration.underline,
+                      // decorationColor: Colors.green,
+                      // decorationThickness: 2.0,
+                      decorationStyle: TextDecorationStyle.wavy,
+                      fontFamily: 'Roboto',
+                    ),
                   ),
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ForgotePassword()))),
-              SizedBox(
-                height: 24,
-              ),
-              RichText(
-                  text: TextSpan(
-                      style: TextStyle(color: Colors.black),
-                      text: 'No accont ?  ',
-                      children: [
-                    TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onclickedSignIn,
-                        text: 'Sign up',
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      label: Text('Email'),
+                      labelStyle: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 18,
+                        //fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (email) =>
+                        email != null && !EmailValidator.validate(email)
+                            ? 'Enter a valid email'
+                            : null,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    obscureText: true,
+                    controller: passwordController,
+                    // keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      label: Text('password'),
+                      labelStyle: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 18,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          //shape: ,
+                          minimumSize: Size.fromHeight(50)),
+                      onPressed: signIn,
+                      icon: Icon(Icons.login),
+                      label: Text('Sign in')),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  GestureDetector(
+                      child: Text(
+                        'forgote password',
                         style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline))
-                  ]))
-            ],
+                            decoration: TextDecoration.underline,
+                            color: Color.fromARGB(255, 255, 7, 172)),
+                      ),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ForgotePassword()))),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          style: TextStyle(color: Colors.black),
+                          text: 'No accont ?  ',
+                          children: [
+                        TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = widget.onclickedSignIn,
+                            text: 'Sign up',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline))
+                      ]))
+                ],
+              ),
+            ),
           ),
         ),
       ),

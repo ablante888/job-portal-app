@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
 import './skills.dart';
 //import 'package:date_field/date_field.dart';
 import '../jobSeekerModel/job_seeker_profile_model.dart';
@@ -32,13 +33,13 @@ class _ExperienceState extends State<Experience> {
     final personal_info_doc_ref = FirebaseFirestore.instance
         .collection('job-seeker')
         .doc(getCurrentUserUid());
-    final json = experienceInfo.toJeson();
+    final json = experienceInfo.toJson();
     await personal_info_doc_ref
-        .collection('profile')
-        .doc('user Experience')
-        .collection('Experiences')
-        .doc('eachExperience')
-        .set(json);
+        .collection('jobseeker-profile')
+        .doc('profile')
+        .set({
+      'experiences': {'experience': json}
+    }, SetOptions(merge: true));
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -248,7 +249,6 @@ class _ExperienceState extends State<Experience> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState?.save();
-
                       try {
                         final experienceInfo = ExperienceModel(
                             title: jobTitle,
@@ -257,17 +257,23 @@ class _ExperienceState extends State<Experience> {
                             endDate: endDate,
                             city: city,
                             region: region);
-
+                        print(experienceInfo.city);
+                        print(experienceInfo.company);
+                        print(experienceInfo.region);
+                        print(experienceInfo.startDate);
                         ExperienceProvider provider = ExperienceProvider();
                         provider.experience = experienceInfo;
-                        //saveExperienceInfo(experienceInfo);
-                        Utils.showSnackBar('sucessfully saved', Colors.green);
-                      } on FirebaseException catch (e) {
-                        Utils.showSnackBar(e.message, Colors.red);
-                      }
+                        final getData = provider.experience;
+                        print(getData.city);
 
-                      Navigator.pushNamed(context, SkillSet.routeName);
+                        // saveExperienceInfo(experienceInfo);
+                        Utils.showSnackBar('sucessfully saved', Colors.green);
+                      } catch (e) {
+                        Utils.showSnackBar(e.toString(), Colors.red);
+                      }
                     }
+
+                    Navigator.pushNamed(context, SkillSet.routeName);
                   },
                   icon: Icon(Icons.forward),
                   label: Text('Save and Continue'),

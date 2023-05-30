@@ -32,11 +32,12 @@ class _EducationFormState extends State<EducationForm> {
     final personal_info_doc_ref = FirebaseFirestore.instance
         .collection('job-seeker')
         .doc(getCurrentUserUid());
-    final json = educationinfo.toJeson();
+    final json = educationinfo.toJson();
+    // final <Map<Map>> tt = {'education', json};
     await personal_info_doc_ref
-        .collection('profile')
-        .doc('Education')
-        .set(json);
+        .collection('jobseeker-profile')
+        .doc('profile')
+        .set({'education': json}, SetOptions(merge: true));
   }
 
   final collageNameController = TextEditingController();
@@ -260,9 +261,7 @@ class _EducationFormState extends State<EducationForm> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState?.save();
-
                         try {
-                          //saveEducationInfo(educationInfo);
                           final educationInfo = Education(
                               GPA: Cgpa,
                               levelOfEducation: eduLevelChoosed,
@@ -270,6 +269,8 @@ class _EducationFormState extends State<EducationForm> {
                               fieldOfStudy: fieldOfStudyChoosed,
                               startDate: startDateSelected,
                               endDate: endDateSelected);
+                          //  print(educationInfo);
+                          // saveEducationInfo(educationInfo);
                           EducationProvider provider = EducationProvider();
                           provider.education = educationInfo;
                           Utils.showSnackBar('sucessfully saved', Colors.green);

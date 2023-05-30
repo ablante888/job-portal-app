@@ -5,8 +5,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:project1/Employers/Employers_account/emp_register.dart';
 import 'package:project1/Employers/bridgeTOemp_home_page.dart';
 import 'package:project1/Employers/emp_profile/emp_form.dart';
+import 'package:project1/Employers/home_page/applyers_detail.dart';
+import 'package:project1/Employers/home_page/detail_page.dart';
+import 'package:project1/Employers/home_page/emp_home_page.dart';
+import 'package:project1/Employers/manage_posts/edit_posts.dart';
 import 'package:project1/Employers/manage_posts/manage_post.dart';
 import 'package:project1/hompage.dart';
+import 'package:project1/profile/job_seeker_view_profile.dart';
 import 'package:project1/profile/personal_info.dart';
 import 'package:project1/user_account/login.dart';
 import 'package:project1/user_account/utils.dart';
@@ -49,12 +54,16 @@ class JobSeekerProfileWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => PersonalInfoProvider()),
-        // ChangeNotifierProvider.value(value: PersonalInfoProvider())
-        ChangeNotifierProvider(create: (_) => EducationProvider()),
-        ChangeNotifierProvider(create: (_) => ExperienceProvider()),
-        ChangeNotifierProvider(create: (_) => SkillProvider()),
-        ChangeNotifierProvider(create: (_) => otherProvider()),
+        // ChangeNotifierProvider(create: (_) => PersonalInfoProvider()),
+        ChangeNotifierProvider.value(value: PersonalInfoProvider()),
+        //ChangeNotifierProvider(create: (_) => EducationProvider()),
+        ChangeNotifierProvider.value(value: EducationProvider()),
+        //ChangeNotifierProvider(create: (_) => ExperienceProvider()),
+        ChangeNotifierProvider.value(value: ExperienceProvider()),
+        // ChangeNotifierProvider(create: (_) => SkillProvider()),
+        // ChangeNotifierProvider.value(value: SkillProvider()),
+        // ChangeNotifierProvider(create: (_) => otherProvider()),
+        // ChangeNotifierProvider.value(value: otherProvider()),
       ],
       child: MyApp(),
     );
@@ -64,9 +73,11 @@ class JobSeekerProfileWrapper extends StatelessWidget {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  // This widget is the root of our application.
   @override
   Widget build(BuildContext context) {
+    PersonalInfoProvider personal = Provider.of<PersonalInfoProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: Utils.messangerKey,
@@ -74,6 +85,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.indigo,
         primarySwatch: Colors.blue,
+        backgroundColor: Colors.blue,
         errorColor: Colors.red,
       ),
       home: MyHomePage(),
@@ -94,7 +106,12 @@ class MyApp extends StatelessWidget {
         TabsScreen.routeName: ((context) => TabsScreen()),
         JobPostingForm.routName: ((context) => JobPostingForm()),
         Manage_posts.routeName: ((context) => Manage_posts()),
-        Emp_home.routeName: ((context) => Emp_home())
+        Emp_home.routeName: ((context) => Emp_home()),
+        HomePage.routeName: ((context) => HomePage()),
+        ApplicantPage.routeName: ((context) => ApplicantPage()),
+        EditJobPostingForm.routName: ((context) => EditJobPostingForm()),
+        // JobDetailPage.routName: (context) => JobDetailPage(),
+        //   ProfilePageView.routeName: ((context) => ProfilePageView())
       },
     );
   }
@@ -128,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('title'),
+        title: Text('Home'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -137,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(),
             Container(),
             SizedBox(
-              height: 50,
+              height: 100,
             ),
             SizedBox(
               height: 200,
@@ -164,6 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       )),
                     ),
                   ),
+                  //assets/images/post2.jpeg
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Card(
@@ -171,8 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           borderRadius: BorderRadius.circular(15)),
                       color: Color.fromARGB(255, 18, 211, 224),
                       child: Center(
-                        child: Text(
-                          'ddddddd',
+                        child: Image(
+                          image: AssetImage('assets/images/post2.jpeg'),
                         ),
                       ),
                     ),
@@ -185,7 +203,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Color.fromARGB(255, 18, 211, 224),
                       child: Center(
                         child: Text(
-                          'ddddddd',
+                          'All can be done in Hullu Jobs',
+                          style: TextStyle(fontSize: 25),
                         ),
                       ),
                     ),

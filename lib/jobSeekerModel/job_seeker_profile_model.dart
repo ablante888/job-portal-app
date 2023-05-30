@@ -11,37 +11,38 @@ class JobSeekerProfile {
   // final List<Education> education;
   // final List<ExperienceModel> experience;
   // final List<Skill> skills;
-  final Education education;
-  final ExperienceModel experience;
-  final Skill skills;
-  final Other otherInfo;
+  // final Education education;
+  // final ExperienceModel experience;
+  // final Skill skills;
+  // final Other otherInfo;
   JobSeekerProfile({
     required this.profileId,
     required this.personalInfo,
-    required this.education,
-    required this.experience,
-    required this.skills,
-    required this.otherInfo,
+    // required this.education,
+    // required this.experience,
+    // required this.skills,
+    // required this.otherInfo,
     // this.education = const [],
     // this.experience = const [],
     // this.skills = const [],
   });
   factory JobSeekerProfile.fromMap(Map<String, dynamic> data) {
     return JobSeekerProfile(
-        profileId: json.decode('profile id'),
-        personalInfo: PersonalInfo.fromJeson(data['personal info']),
-        education: Education.fromMap(data['education']),
-        experience: ExperienceModel.fromMap(data['experience']),
-        skills: Skill.fromMap(data['skills']),
-        otherInfo: Other.fromMap(data['other info']));
+      profileId: data['profile id'],
+      personalInfo: PersonalInfo.fromJeson(data['personal info']),
+      // education: Education.fromMap(data['education']),
+      // experience: ExperienceModel.fromMap(data['experience']),
+      // skills: Skill.fromMap(data['skills']),
+      // otherInfo: Other.fromMap(data['other info'])
+    );
   }
-  Map<String, dynamic> toJeson() => {
+  Map<String, dynamic> toJson() => {
         'profile id': profileId,
-        'personal info': personalInfo.toJeson(),
-        'education': education.toJeson(),
-        'experience': experience.toJeson(),
-        'skills': Skill,
-        'region': Other,
+        'personal info': personalInfo.toJson(),
+        // 'education': education.toJson(),
+        // 'experience': experience.toJson(),
+        // 'skills': Skill,
+        // 'otherInfo': Other.toJson(),
       };
 }
 
@@ -63,7 +64,7 @@ class PersonalInfo {
       this.region = '',
       this.email = '',
       this.phoneNumber = ''});
-  Map<String, dynamic> toJeson() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'first name': firstName,
         'last name': lastName,
@@ -81,7 +82,7 @@ class PersonalInfo {
       city: json['city'],
       region: json['region'],
       email: json['email'],
-      phoneNumber: json[['phone number']]);
+      phoneNumber: json['phone number']);
 }
 
 class Education {
@@ -100,7 +101,7 @@ class Education {
     this.startDate,
     this.endDate,
   });
-  Map<String, dynamic> toJeson() => {
+  Map<String, dynamic> toJson() => {
         'levelOfEducation': levelOfEducation,
         'institution': institution,
         'fieldOfStudy': fieldOfStudy,
@@ -131,7 +132,7 @@ class ExperienceModel {
     this.region,
     this.city,
   });
-  Map<String, dynamic> toJeson() => {
+  Map<String, dynamic> toJson() => {
         'job title': title,
         'company': company,
         'startDte': startDate,
@@ -153,7 +154,7 @@ class Skill {
   List<String>? personalSkills;
   List<String>? languageSkills;
   Skill({this.languageSkills, this.personalSkills, this.professionalSkills});
-  Map<String, dynamic> toJeson() => {
+  Map<String, dynamic> toJson() => {
         'professional skills': professionalSkills,
         'personal skills': personalSkills,
         'language skills': languageSkills,
@@ -167,14 +168,17 @@ class Skill {
 class Other {
   String? aboutMe;
   String? imageUrl;
-  Other({this.aboutMe, this.imageUrl});
+  String? preferredJob;
+  Other({this.aboutMe, this.imageUrl, this.preferredJob});
   factory Other.fromMap(Map<String, dynamic> json) => Other(
         aboutMe: json['language skills'],
-        imageUrl: json['personal skills'],
+        imageUrl: json['profile image'],
+        preferredJob: json['preferred job'],
       );
-  Map<String, dynamic> toJeson() => {
+  Map<String, dynamic> toJson() => {
         'about me': aboutMe,
         'profile image': imageUrl,
+        'preferred job': preferredJob
         //  'language skills': languageSkills,
       };
 }
@@ -195,13 +199,21 @@ class Other {
 // }
 
 class PersonalInfoProvider extends ChangeNotifier {
-  PersonalInfo _personalInfo = PersonalInfo();
+  PersonalInfo _personalInfo = PersonalInfo(
+      id: 'ee',
+      firstName: 'dfasd',
+      lastName: 'sdsda',
+      gender: 'dss',
+      city: 'sd',
+      region: 'asd',
+      email: 'dd',
+      phoneNumber: 'asd');
 
   PersonalInfo get personalInfo => _personalInfo;
 
   set personalInfo(PersonalInfo value) {
     _personalInfo = value;
-    notifyListeners();
+    // notifyListeners();
   }
 }
 

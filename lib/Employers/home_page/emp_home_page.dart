@@ -72,26 +72,6 @@ class _EmpHomePageState extends State<EmpHomePage> {
             SizedBox(
               height: 35.0,
             ),
-            // FlatButton(
-            //   onPressed: () {},
-            //   child: Container(
-            //     height: 35.0,
-            //     width: 200.0,
-            //     decoration: BoxDecoration(
-            //         color: Colors.blue,
-            //         borderRadius: BorderRadius.circular(20.0)),
-            //     child: Center(
-            //       child: Text('Get Started',
-            //           style: TextStyle(
-            //               fontSize: 20.0,
-            //               fontWeight: FontWeight.bold,
-            //               fontFamily: 'Roboto',
-            //               color: Colors.white)),
-            //     ),
-            //   ),
-            // ),
-            //   Row(children: [],),
-
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, JobPostingForm.routName,

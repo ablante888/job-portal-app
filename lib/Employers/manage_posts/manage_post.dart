@@ -26,7 +26,9 @@ import 'package:flutter/src/widgets/framework.dart';
 // //void main() => runApp(Manage_posts());
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project1/Employers/manage_posts/edit_posts.dart';
 
+import '../home_page/job_post_form.dart';
 import '../models/jobs_model.dart';
 
 class Manage_posts extends StatefulWidget {
@@ -98,7 +100,11 @@ class _Manage_postsState extends State<Manage_posts> {
                                 child: Row(
                                   children: [
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.pushNamed(context,
+                                              EditJobPostingForm.routName,
+                                              arguments: document);
+                                        },
                                         icon: Icon(
                                           Icons.edit,
                                           color: Theme.of(context).primaryColor,

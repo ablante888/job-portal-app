@@ -48,6 +48,8 @@ dependencies:
   path_provider: ^2.0.14
   uuid: ^3.0.7
   provider: ^6.0.5
+  animated_text_kit: ^4.2.2
+  shared_preferences: ^2.1.1
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +79,7 @@ flutter:
     - assets/images/profile2.jpeg
     - assets/images/post.jpeg
     - assets/images/logo.jpg
+    - assets/images/post2.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

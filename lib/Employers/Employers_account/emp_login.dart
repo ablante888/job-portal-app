@@ -16,6 +16,7 @@ import '../../firebase_options.dart';
 import 'package:email_validator/email_validator.dart';
 import 'emp_forgote_account.dart';
 import 'empUtils.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class EmpLoginWidget extends StatefulWidget {
   final VoidCallback onclickedSignIn;
@@ -127,79 +128,135 @@ class _EmpLoginWidgetState extends State<EmpLoginWidget> {
       appBar: AppBar(
         title: Text('Employer Login'),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            width: (MediaQuery.of(context).size.width) * 3 / 4,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextFormField(
-                  controller: companyNameController,
-                  keyboardType: TextInputType.visiblePassword,
-                  decoration: InputDecoration(label: Text('company name')),
-                  // autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                TextFormField(
-                  controller: taxIdController,
-                  keyboardType: TextInputType.visiblePassword,
-                  decoration: InputDecoration(label: Text('Tax ID')),
-                  //autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(label: Text('Email')),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (email) =>
-                      email != null && !EmailValidator.validate(email)
-                          ? 'Enter a valid email'
-                          : null,
-                ),
-                TextFormField(
-                  controller: passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  decoration: InputDecoration(label: Text('password')),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                        minimumSize: Size.fromHeight(50)),
-                    onPressed: signIn,
-                    icon: Icon(Icons.lock_open),
-                    label: Text('Sign in')),
-                SizedBox(
-                  height: 24,
-                ),
-                GestureDetector(
-                    child: Text(
-                      'forgote password',
-                      style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: Color.fromARGB(255, 255, 7, 172)),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Container(
+              width: (MediaQuery.of(context).size.width) * 3 / 4,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // TextFormField(
+                  //   controller: companyNameController,
+                  //   keyboardType: TextInputType.visiblePassword,
+                  //   decoration: InputDecoration(label: Text('company name')),
+                  //   // autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // ),
+                  // TextFormField(
+                  //   controller: taxIdController,
+                  //   keyboardType: TextInputType.visiblePassword,
+                  //   decoration: InputDecoration(label: Text('Tax ID')),
+                  //   //autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // ),
+                  AnimatedTextKit(
+                    animatedTexts: [
+                      TypewriterAnimatedText('Welcome back!',
+                          textStyle: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 30,
+                            fontStyle: FontStyle.italic,
+                            fontFamily: 'Times New Roman',
+                            fontWeight: FontWeight.w500,
+                          ),
+                          speed: const Duration(
+                            milliseconds: 450,
+                          )),
+                    ],
+                    // onTap: () {
+                    //   debugPrint("Welcome back!");
+                    // },
+                    isRepeatingAnimation: true,
+                    totalRepeatCount: 4,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      label: Text('Email'),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ForgotePassword()))),
-                SizedBox(
-                  height: 24,
-                ),
-                RichText(
-                    text: TextSpan(
-                        style: TextStyle(color: Colors.black),
-                        text: 'No accont ?  ',
-                        children: [
-                      TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = widget.onclickedSignIn,
-                          text: 'Sign up',
-                          style: TextStyle(
-                              color: Colors.blue,
-                              decoration: TextDecoration.underline))
-                    ]))
-              ],
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (email) =>
+                        email != null && !EmailValidator.validate(email)
+                            ? 'Enter a valid email'
+                            : null,
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    controller: passwordController,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      label: Text('password'),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: Size.fromHeight(50)),
+                      onPressed: signIn,
+                      icon: Icon(Icons.login),
+                      label: Text('Sign in')),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  GestureDetector(
+                      child: Text(
+                        'forgote password',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Color.fromARGB(255, 255, 7, 172)),
+                      ),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ForgotePassword()))),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          style: TextStyle(color: Colors.black),
+                          text: 'No accont ?  ',
+                          children: [
+                        TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = widget.onclickedSignIn,
+                            text: 'Sign up',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline))
+                      ]))
+                ],
+              ),
             ),
           ),
         ),

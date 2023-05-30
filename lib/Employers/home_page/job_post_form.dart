@@ -51,6 +51,7 @@ class _JobPostingFormState extends State<JobPostingForm> {
   List requirement = [];
   String jobId = '';
   DateTime postedTime = DateTime.now();
+  var companyData;
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -92,17 +93,72 @@ class _JobPostingFormState extends State<JobPostingForm> {
         .collection('job posting')
         .doc(jobId);
     final json = jobData.toJson();
-    await job_document_ref
-        // .collection('Employer profile')
-        // .doc('personal_info')
-        .set(json);
+    await company_job_post_ref.set(json);
     await job_document_ref.set(json);
+  }
+
+  void getDataFromFirestore() async {
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('employer')
+        .doc(getCurrentUserUid())
+        .collection('company profile')
+        .doc('profile')
+        .get();
+
+    if (snapshot.exists) {
+      setState(() {
+        companyData = snapshot.data();
+      });
+    }
+  }
+
+  Company object = Company(
+      companyId: 'companyId',
+      name: 'name',
+      address: 'address',
+      city: 'city',
+      state: 'state',
+      country: 'country',
+      phone: 'phone',
+      email: 'email',
+      website: 'website',
+      description: 'description',
+      industry: 'industry',
+      companySize: 'companySize',
+      logoUrl: 'logoUrl');
+  // final company_data;
+  Future<void> getData() async {
+    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        .collection('employer')
+        .doc(getCurrentUserUid())
+        .collection('company profile')
+        .doc('profile')
+        .get();
+
+    if (snapshot.exists) {
+      Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+      if (data != null) {
+        Company updatedObject = Company.fromJson(data);
+        // setState(() {
+        //   object = updatedObject;
+        // });
+
+        print('The city of the company is: ${updatedObject.city}');
+        print(updatedObject.description);
+      } else {
+        // Handle the case when data is null
+      }
+    } else {
+      print('Document does not exist');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     createJobId();
-    final companyObject = ModalRoute.of(context)?.settings.arguments as Company;
+
+    // print('company data is :${globalData}');
+    //getData();
     return Scaffold(
       appBar: AppBar(
         title: Text('Post a Job'),
@@ -135,7 +191,9 @@ class _JobPostingFormState extends State<JobPostingForm> {
                     return null;
                   },
                   onSaved: (value) {
-                    if (value != null) jobTitle = value;
+                    if (value != null) {
+                      jobTitle = value;
+                    }
                   },
                 ),
                 SizedBox(
@@ -167,7 +225,7 @@ class _JobPostingFormState extends State<JobPostingForm> {
                               value: item,
                             ))
                         .toList(),
-                    //value: jobCategorySelected,
+                    value: jobCtegory[0],
                     onChanged: (value) {
                       setState(() {
                         jobCategorySelected = value.toString();
@@ -177,7 +235,9 @@ class _JobPostingFormState extends State<JobPostingForm> {
                 Text('Job Descreption'),
                 TextFormField(
                   onSaved: (newValue) {
-                    if (newValue != null) jobDescreption = newValue;
+                    if (newValue != null) {
+                      jobDescreption = newValue;
+                    }
                   },
                   maxLines: 5,
                   decoration: InputDecoration(
@@ -286,7 +346,9 @@ class _JobPostingFormState extends State<JobPostingForm> {
                     return null;
                   },
                   onSaved: (value) {
-                    if (value != null) salary = value;
+                    if (value != null) {
+                      salary = value;
+                    }
                   },
                 ),
                 SizedBox(height: 16),
@@ -314,7 +376,7 @@ class _JobPostingFormState extends State<JobPostingForm> {
                               value: item,
                             ))
                         .toList(),
-                    // value: employmentTypeSelected,
+                    value: employmentType[0],
                     onChanged: (value) {
                       setState(() {
                         employmentTypeSelected = value.toString();
@@ -376,7 +438,9 @@ class _JobPostingFormState extends State<JobPostingForm> {
                     return null;
                   },
                   onSaved: (value) {
-                    if (value != null) jobLocation = value;
+                    if (value != null) {
+                      jobLocation = value;
+                    }
                   },
                 ),
                 SizedBox(height: 16),
@@ -403,7 +467,7 @@ class _JobPostingFormState extends State<JobPostingForm> {
                               value: item,
                             ))
                         .toList(),
-                    //   value: experienceLevelSelected,
+                    value: experienceLevel[0],
                     onChanged: (value) {
                       setState(() {
                         experienceLevelSelected = value.toString();
@@ -436,7 +500,7 @@ class _JobPostingFormState extends State<JobPostingForm> {
                               value: item,
                             ))
                         .toList(),
-                    //   value: educatonLelSeleceted,
+                    value: educationLevel[0],
                     onChanged: (value) {
                       setState(() {
                         educatonLelSeleceted = value.toString();
@@ -461,26 +525,16 @@ class _JobPostingFormState extends State<JobPostingForm> {
                     }
                     return null;
                   },
-                  // onSaved: (value) {
-                  //   if (value != null) _selectedDate = value as DateTime;
-                  // },
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                // RaisedButton(
-                //   child: Text('Post Job'),
-                //   onPressed: () {
-                //     if (_formKey.currentState!.validate()) {
-                //       // TODO: Save job posting data
-                //     }
-                //   },
-                // ),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState?.save();
+                        getDataFromFirestore();
                         final job_post = JobPost(
                             timePosted: postedTime,
                             JobId: jobId,
@@ -494,8 +548,10 @@ class _JobPostingFormState extends State<JobPostingForm> {
                             experienceLevel: experienceLevelSelected,
                             educationLevel: educatonLelSeleceted,
                             deadline: _selectedDate,
-                            company: companyObject);
+                            company: companyData);
                         try {
+                          // getData();
+
                           saveJobPost(job_post);
                           EmpUtils.showSnackBar(
                               'sucessfully posted', Colors.green);
@@ -524,27 +580,3 @@ class _JobPostingFormState extends State<JobPostingForm> {
     );
   }
 }
-
-// class JobPosting {
-//   String id;
-//   String title;
-//   String company;
-//   String location;
-//   String industry;
-//   String description;
-//   double salary;
-//   DateTime deadline;
-//   List<String> requirements;
-
-//   JobPosting({
-//     required this.id,
-//     required this.title,
-//     required this.company,
-//     required this.location,
-//     required this.industry,
-//     required this.description,
-//     required this.salary,
-//     required this.deadline,
-//     required this.requirements,
-//   });
-// }

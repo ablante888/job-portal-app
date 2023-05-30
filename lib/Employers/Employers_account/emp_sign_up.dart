@@ -9,6 +9,7 @@ import 'package:project1/user_account/utils.dart';
 import 'emp_verify.dart';
 import '../../firebase_options.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class EmpsignUp extends StatefulWidget {
   final VoidCallback onclickedEmpSignUp;
@@ -67,7 +68,7 @@ class _EmpsignUpState extends State<EmpsignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('sign Up'),
+        title: Text('SIGN UP'),
       ),
       body: Form(
         key: formKey,
@@ -77,20 +78,74 @@ class _EmpsignUpState extends State<EmpsignUp> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                AnimatedTextKit(
+                  animatedTexts: [
+                    TypewriterAnimatedText('Welcome !',
+                        textStyle: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 30,
+                          fontStyle: FontStyle.italic,
+                          fontFamily: 'Times New Roman',
+                          fontWeight: FontWeight.w500,
+                        ),
+                        speed: const Duration(
+                          milliseconds: 450,
+                        )),
+                  ],
+                  // onTap: () {
+                  //   debugPrint("Welcome back!");
+                  // },
+                  isRepeatingAnimation: true,
+                  totalRepeatCount: 4,
+                ),
+                SizedBox(
+                  height: 15,
+                ),
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(label: Text('Email')),
+                  decoration: InputDecoration(
+                    label: Text('Email'),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (email) =>
                       email != null && !EmailValidator.validate(email)
                           ? 'Enter a valid email'
                           : null,
                 ),
+                SizedBox(
+                  height: 15,
+                ),
                 TextFormField(
                   controller: passwordController,
                   keyboardType: TextInputType.visiblePassword,
-                  decoration: InputDecoration(label: Text('password')),
+                  decoration: InputDecoration(
+                    label: Text('password'),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueAccent),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) => value != null && value.length < 6
                       ? 'Enter at least 6 characters'
@@ -103,7 +158,7 @@ class _EmpsignUpState extends State<EmpsignUp> {
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size.fromHeight(50)),
                     onPressed: EmpsignUp,
-                    icon: Icon(Icons.lock_open),
+                    icon: Icon(Icons.person_add),
                     label: Text('Sign up')),
                 SizedBox(
                   height: 24,
@@ -118,9 +173,10 @@ class _EmpsignUpState extends State<EmpsignUp> {
                             ..onTap = widget.onclickedEmpSignUp,
                           text: 'Sign in',
                           style: TextStyle(
+                              // fontWeight: FontWeight.bold,
                               color: Colors.blue,
-                              decoration: TextDecoration.underline))
-                    ]))
+                              decoration: TextDecoration.underline)),
+                    ])),
               ],
             ),
           ),

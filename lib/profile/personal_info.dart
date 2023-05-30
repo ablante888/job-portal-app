@@ -34,11 +34,11 @@ class _personal_infoState extends State<personal_info> {
         .collection('job-seeker')
         .doc(getCurrentUserUid());
     personalinfo.id = personal_info_doc_ref.id;
-    final json = personalinfo.toJeson();
+    final json = personalinfo.toJson();
     await personal_info_doc_ref
-        .collection('profile')
-        .doc('personal_info')
-        .set(json);
+        .collection('jobseeker-profile')
+        .doc('profile')
+        .set({'personal-info': json});
   }
 
   final firstNameController = TextEditingController();
@@ -385,7 +385,6 @@ class _personal_infoState extends State<personal_info> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState?.save();
-
                           try {
                             final personal_info = PersonalInfo(
                                 firstName: firstName,
@@ -398,15 +397,15 @@ class _personal_infoState extends State<personal_info> {
                             PersonalInfoProvider provider =
                                 PersonalInfoProvider();
                             provider.personalInfo = personal_info;
-                            //  savePesonalInfo(personal_info);
+                            // savePesonalInfo(personal_info);
                             Utils.showSnackBar(
                                 'sucessfully saved', Colors.green);
                           } on FirebaseException catch (e) {
                             Utils.showSnackBar(e.message, Colors.red);
                           }
-
-                          Navigator.pushNamed(context, EducationForm.routeName);
                         }
+
+                        Navigator.pushNamed(context, EducationForm.routeName);
                       },
                       // style: ButtonStyle(),
                       icon: Icon(Icons.forward),

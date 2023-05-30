@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Company {
   String companyId;
   String name;
@@ -80,7 +82,8 @@ class JobPost {
   String experienceLevel;
   String educationLevel;
   DateTime deadline;
-  Company company;
+  var company;
+  //bool isFavorite;
 
   JobPost({
     required this.timePosted,
@@ -96,6 +99,7 @@ class JobPost {
     required this.educationLevel,
     required this.deadline,
     required this.company,
+    //  required this.isFavorite,
   });
 
   factory JobPost.fromJson(Map<String, dynamic> json) {
@@ -126,11 +130,16 @@ class JobPost {
       'location': location,
       'salary': salary,
       'deadline': deadline.toIso8601String(),
-      'company': company.toJson(),
+      'company': company,
       'employment type': employmentType,
       'experience level': experienceLevel,
       'education level': educationLevel,
       'job category': category,
     };
   }
+
+  // void toggleFavoriteStatus() {
+  //   isFavorite = !isFavorite;
+  //   notifyListeners();
+  // }
 }

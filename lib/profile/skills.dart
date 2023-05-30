@@ -43,6 +43,7 @@ class SkillSet extends StatefulWidget {
 }
 
 class _SkillSetState extends State<SkillSet> {
+  String? _jobPreference;
   String? uid;
   File? _image;
   String? _imageUrl;
@@ -137,8 +138,20 @@ class _SkillSetState extends State<SkillSet> {
   final user_reference = FirebaseFirestore.instance.collection('job-seeker');
   Future saveSkillInfo(Skill job_seeker_skill) async {
     final personal_info_doc_ref = user_reference.doc(getCurrentUserUid());
-    final json = job_seeker_skill.toJeson();
-    await personal_info_doc_ref.collection('profile').doc('skills').set(json);
+    final json = job_seeker_skill.toJson();
+    await personal_info_doc_ref
+        .collection('jobseeker-profile')
+        .doc('profile')
+        .set({'skills': json}, SetOptions(merge: true));
+  }
+
+  Future saveOtherInfo(Other other_info) async {
+    final personal_info_doc_ref = user_reference.doc(getCurrentUserUid());
+    final json = other_info.toJson();
+    await personal_info_doc_ref
+        .collection('jobseeker-profile')
+        .doc('profile')
+        .set({'other-data': json}, SetOptions(merge: true));
   }
 
   String? _uploadedFileURL;
@@ -155,6 +168,7 @@ class _SkillSetState extends State<SkillSet> {
       _uploadedFileURL = url;
       _imageUrl = _uploadedFileURL;
     });
+    print(_imageUrl);
   }
 
   void createProfileId() {
@@ -165,11 +179,11 @@ class _SkillSetState extends State<SkillSet> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> writeJobSeekerProfile(JobSeekerProfile jobSeekerProfile) async {
-    final personalInfoMap = jobSeekerProfile.personalInfo.toJeson();
-    final educationMap = jobSeekerProfile.education.toJeson();
-    final experienceMap = jobSeekerProfile.experience.toJeson();
-    final skillMap = jobSeekerProfile.skills.toJeson();
-    final otherMap = jobSeekerProfile.otherInfo.toJeson();
+    final personalInfoMap = jobSeekerProfile.personalInfo.toJson();
+    //final educationMap = jobSeekerProfile.education.toJson();
+    //final experienceMap = jobSeekerProfile.experience.toJson();
+    // final skillMap = jobSeekerProfile.skills.toJson();
+    // final otherMap = jobSeekerProfile.otherInfo.toJson();
     createProfileId();
     try {
       await firestore
@@ -180,10 +194,10 @@ class _SkillSetState extends State<SkillSet> {
           .set({
         'profile id': profileId,
         'personal_info': personalInfoMap,
-        'education': educationMap,
-        'experience': experienceMap,
-        'skills': skillMap,
-        'about me': otherMap,
+        // 'education': educationMap,
+        //'experience': experienceMap,
+        // 'skills': skillMap,
+        // 'about me': otherMap,
       });
     } catch (e) {
       print('Error writing JobSeekerProfile to Firestore: $e');
@@ -468,6 +482,49 @@ class _SkillSetState extends State<SkillSet> {
                   ),
                 ),
               ),
+              Text('Preferred job'),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Job Title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a job title';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _jobPreference = value;
+                  },
+                ),
+              ),
               SizedBox(height: 16.0),
               Padding(
                 padding:
@@ -484,21 +541,26 @@ class _SkillSetState extends State<SkillSet> {
                         languageSkills: languageSkill,
                         personalSkills: personalSkill,
                         professionalSkills: proffesionalSkill);
-                    _uploadFile(); //uploades image to firebase storage
-                    final other_info =
-                        Other(aboutMe: about, imageUrl: _imageUrl);
+                    // _uploadFile(); //uploades image to firebase storage
+
                     SkillProvider provider = SkillProvider();
                     provider.skill = skill_Set;
                     otherProvider otherInfoProvider = otherProvider();
-                    otherInfoProvider.otherInfo = other_info;
+                    //otherInfoProvider.otherInfo = other_info;
                     try {
-                      // saveSkillInfo(skill_Set);
+                      saveSkillInfo(skill_Set);
+                      _uploadFile();
+                      final other_info = Other(
+                          aboutMe: about,
+                          imageUrl: _imageUrl,
+                          preferredJob: _jobPreference);
+                      saveOtherInfo(other_info);
                       // user_reference
                       //     .doc(getCurrentUserUid())
                       //     .collection('profile')
                       //     .doc('About')
                       //     .set({'summary': about});
-                      // _uploadFile();
+
                       // uploadImage();
                       // addImageToFirestore();
                       // uploadFile();
@@ -507,24 +569,29 @@ class _SkillSetState extends State<SkillSet> {
                         personalInfo: Provider.of<PersonalInfoProvider>(context,
                                 listen: false)
                             .personalInfo,
-                        education: Provider.of<EducationProvider>(context,
-                                listen: false)
-                            .education,
-                        experience: Provider.of<ExperienceProvider>(context,
-                                listen: false)
-                            .experience,
-                        skills:
-                            Provider.of<SkillProvider>(context, listen: false)
-                                .skill,
-                        otherInfo:
-                            Provider.of<otherProvider>(context, listen: false)
-                                .otherInfo,
+                        // education:
+                        //     Provider.of<EducationProvider>(context, listen: false)
+                        //         .education,
+                        // experience: Provider.of<ExperienceProvider>(context,
+                        //         listen: false)
+                        //     .experience,
+                        // skills: Provider.of<SkillProvider>(context, listen: false)
+                        //     .skill,
+                        // otherInfo:
+                        //     Provider.of<otherProvider>(context, listen: false)
+                        //         .otherInfo,
                       );
-                      writeJobSeekerProfile(profile);
+                      final abc = Provider.of<ExperienceProvider>(context,
+                              listen: false)
+                          .experience
+                          .city;
+                      print('my beautifull city is called :${abc}');
+                      // writeJobSeekerProfile(profile);
                       Utils.showSnackBar(
                           'Profile successfuly saved', Colors.green);
-                    } on FirebaseException catch (e) {
-                      Utils.showSnackBar(e.message, Colors.red);
+                    } catch (e) {
+                      Utils.showSnackBar(e.toString(), Colors.red);
+                      print(e.toString());
                     }
                   }
 

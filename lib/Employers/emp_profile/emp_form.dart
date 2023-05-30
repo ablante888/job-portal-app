@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:project1/Employers/bridgeTOemp_home_page.dart';
 import 'package:project1/Employers/home_page/tabs_screen.dart';
 import 'package:project1/Employers/models/jobs_model.dart';
 import './compLogo_picker.dart';
@@ -71,6 +72,7 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
       _uploadedFileURL = url;
       companyLogo = url;
     });
+    print('the company logo url is : ${companyLogo}');
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -501,7 +503,7 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
                           filled: true,
                           fillColor: Colors.blue[50],
                           hintText: 'Select an option',
-                          hintStyle: TextStyle(color: Colors.white),
+                          // hintStyle: TextStyle(color: Colors.white),
                           contentPadding:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
@@ -541,7 +543,7 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
                           filled: true,
                           fillColor: Colors.blue[50],
                           hintText: 'Select an option',
-                          hintStyle: TextStyle(color: Colors.white),
+                          // hintStyle: TextStyle(color: Colors.white),
                           contentPadding:
                               EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
@@ -564,51 +566,76 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
                         }),
                   ),
                   // CompanyLogoPicker(onImageSelected: _onImageSelected),
+                  Text(
+                    'Profile Picture:',
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                  ),
                   CompanyLogoPicker(onImageSelected: _onImageSelected),
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: Size.fromHeight(50)),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState?.save();
-                            //   _uploadFile();
-                            // final companyInfo = Company(
-                            //     companyId: _companyId,
-                            //     name: companyName,
-                            //     address: _streetAddress,
-                            //     city: _city,
-                            //     state: _state,
-                            //     country: _country,
-                            //     phone: phoneNumber,
-                            //     email: email,
-                            //     website: companyWebsite,
-                            //     description: comapnyDesription,
-                            //     industry: _IndustryTypeselected,
-                            //     companySize: companySzeSelected,
-                            //     logoUrl: companyLogo);
-                            // try {
-                            //   saveEmployerInfo(companyInfo);
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: Size.fromHeight(50)),
+                            onPressed: () {
+                              Navigator.pushNamed(context, Emp_home.routeName);
+                            },
+                            icon: Icon(Icons.arrow_back),
+                            label: Text('Back')),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        child: ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                                minimumSize: Size.fromHeight(50)),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState?.save();
+                                _uploadFile();
+                                final companyInfo = Company(
+                                    companyId: _companyId,
+                                    name: companyName,
+                                    address: _streetAddress,
+                                    city: _city,
+                                    state: _state,
+                                    country: _country,
+                                    phone: phoneNumber,
+                                    email: email,
+                                    website: companyWebsite,
+                                    description: comapnyDesription,
+                                    industry: _IndustryTypeselected,
+                                    companySize: companySzeSelected,
+                                    logoUrl: companyLogo as String);
+                                try {
+                                  saveEmployerInfo(companyInfo);
 
-                            //   EmpUtils.showSnackBar(
-                            //       'sucessfully saved', Colors.green);
-                            // } on FirebaseException catch (e) {
-                            //   EmpUtils.showSnackBar(e.message, Colors.red);
-                            // }
-                            Navigator.pushNamed(
-                              context,
-                              TabsScreen.routeName,
-                            );
-                            //   Navigator.pushNamed(context, TabsScreen.routeName,
-                            // arguments: companyInfo);
-                          }
-                        },
-                        icon: Icon(Icons.arrow_forward),
-                        label: Text('Save and Continue')),
+                                  EmpUtils.showSnackBar(
+                                      'sucessfully saved', Colors.green);
+                                } on FirebaseException catch (e) {
+                                  EmpUtils.showSnackBar(e.message, Colors.red);
+                                }
+                                // Navigator.pushNamed(
+                                //   context,
+                                //   TabsScreen.routeName,
+                                // );
+                                Navigator.pushNamed(
+                                    context, TabsScreen.routeName,
+                                    arguments: companyInfo);
+                              }
+                            },
+                            icon: Icon(Icons.arrow_forward),
+                            label: Text('Save and Continue')),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 15,
                   ),
                 ],
               )),
