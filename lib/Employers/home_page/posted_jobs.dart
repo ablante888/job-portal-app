@@ -58,40 +58,58 @@ class _Posted_jobsState extends State<Posted_jobs> {
                           EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                       children:
                           snapshot.data!.docs.map((DocumentSnapshot document) {
-                        return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Appliers(
-                                      jobId: document['job id'],
-                                    )),
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Card(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 5, vertical: 10),
-                              child: new ListTile(
-                                shape: RoundedRectangleBorder(
-                                  // side: BorderSide(color: Colors.blue, width: 1),
-                                  borderRadius: BorderRadius.circular(15),
+                          child: Card(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 10),
+                            child: new ListTile(
+                              shape: RoundedRectangleBorder(
+                                // side: BorderSide(color: Colors.blue, width: 1),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              style: ListTileStyle.drawer,
+                              leading: CircleAvatar(
+                                child: Icon(Icons.person),
+                              ),
+                              //  leading: new Text(document['job category']),
+                              title: new Text(
+                                document['title'],
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  width: 20,
+                                  child: Row(
+                                    children: [
+                                      new Text(document['job category']),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      new Text(document['employment type']),
+                                    ],
+                                  )),
+                              trailing: GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Appliers(
+                                            jobId: document['job id'],
+                                          )),
                                 ),
-                                style: ListTileStyle.drawer,
-                                leading: CircleAvatar(
-                                  child: Icon(Icons.person),
-                                ),
-                                //  leading: new Text(document['job category']),
-                                title: new Text(
-                                  document['title'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Container(
-                                    width: 20,
-                                    child: new Text(document['description'])),
-                                trailing: Container(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Center(
+                                      child: Text(
+                                    'View Appliers',
+                                    style: TextStyle(color: Colors.white),
+                                  )),
                                   width: 100,
+                                  height: 40,
                                 ),
                               ),
                             ),

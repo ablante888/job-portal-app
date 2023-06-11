@@ -584,7 +584,8 @@ class _EmployerRegistrationFormState extends State<EmployerRegistrationForm> {
                             style: ElevatedButton.styleFrom(
                                 minimumSize: Size.fromHeight(50)),
                             onPressed: () {
-                              Navigator.pushNamed(context, Emp_home.routeName);
+                              Navigator.pushReplacementNamed(
+                                  context, Emp_home.routeName);
                             },
                             icon: Icon(Icons.arrow_back),
                             label: Text('Back')),

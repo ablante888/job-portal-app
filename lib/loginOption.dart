@@ -62,17 +62,12 @@ class _loginOptionState extends State<loginOption> {
             ElevatedButton(
               onPressed: () {
                 if (_userType == UserType.jobSeeker) {
-                  // Add job seeker login logic here
-                  // Navigator.pushNamed(context, AuthPage.routName);
-                  Navigator.pushNamed(context, Register.routeName);
+                  Navigator.pushNamed(context, AuthPage.routName);
                 } else {
-                  // Add recruiter login logic here
-                  //Navigator.pushNamed(context, EmpAuthPage.routName);
-                  Navigator.pushNamed(context, EmpRegister.routeName);
+                  Navigator.pushNamed(context, EmpAuthPage.routName);
                 }
               },
-
-              child: Text('Login'), //make it change as user type is selected
+              child: Text('Login'),
             ),
           ],
         ),

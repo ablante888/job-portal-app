@@ -169,16 +169,26 @@ class Other {
   String? aboutMe;
   String? imageUrl;
   String? preferredJob;
-  Other({this.aboutMe, this.imageUrl, this.preferredJob});
+  String? SalaryExpectation;
+  String? levelOfExperience;
+  Other(
+      {this.aboutMe,
+      this.imageUrl,
+      this.preferredJob,
+      this.SalaryExpectation,
+      this.levelOfExperience});
   factory Other.fromMap(Map<String, dynamic> json) => Other(
-        aboutMe: json['language skills'],
-        imageUrl: json['profile image'],
-        preferredJob: json['preferred job'],
-      );
+      aboutMe: json['language skills'],
+      imageUrl: json['profile image'],
+      preferredJob: json['preferred job'],
+      SalaryExpectation: json['Expected salary'],
+      levelOfExperience: json['Experience level']);
   Map<String, dynamic> toJson() => {
         'about me': aboutMe,
         'profile image': imageUrl,
-        'preferred job': preferredJob
+        'preferred job': preferredJob,
+        ' Expected salary': SalaryExpectation,
+        'Experience level': levelOfExperience,
         //  'language skills': languageSkills,
       };
 }

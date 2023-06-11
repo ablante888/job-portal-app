@@ -269,8 +269,9 @@ class _EducationFormState extends State<EducationForm> {
                               fieldOfStudy: fieldOfStudyChoosed,
                               startDate: startDateSelected,
                               endDate: endDateSelected);
-                          //  print(educationInfo);
-                          // saveEducationInfo(educationInfo);
+                          print(
+                              ' the educational info is ${educationInfo.GPA}');
+                          //saveEducationInfo(educationInfo);
                           EducationProvider provider = EducationProvider();
                           provider.education = educationInfo;
                           Utils.showSnackBar('sucessfully saved', Colors.green);

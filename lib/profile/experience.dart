@@ -266,7 +266,7 @@ class _ExperienceState extends State<Experience> {
                         final getData = provider.experience;
                         print(getData.city);
 
-                        // saveExperienceInfo(experienceInfo);
+                        //saveExperienceInfo(experienceInfo);
                         Utils.showSnackBar('sucessfully saved', Colors.green);
                       } catch (e) {
                         Utils.showSnackBar(e.toString(), Colors.red);

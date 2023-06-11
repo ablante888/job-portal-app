@@ -10,6 +10,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'package:project1/Employers/home_page/tabs_screen.dart';
 import 'package:project1/jobSeekerModel/job_seeker_profile_model.dart';
 import 'package:project1/job_seeker_home_page/jobSeekerHome.dart';
@@ -134,6 +135,12 @@ class _ProfilePageViewState extends State<ProfilePageView> {
             .toList());
   }
 
+  String formatTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+
+    return DateFormat("yyyy-MM-dd").format(dateTime);
+  }
+
   // final docRef = FirebaseFirestore.instance
   //     .collection('job_seeker')
   //     .doc(getCurrentUserUid())
@@ -175,6 +182,24 @@ class _ProfilePageViewState extends State<ProfilePageView> {
               }
               Map<String, dynamic>? otherData =
                   snapshot.data!.data()?['other-data'] as Map<String, dynamic>?;
+              Map<String, dynamic>? personalInfo = snapshot.data!
+                  .data()?['personal-info'] as Map<String, dynamic>?;
+              Map<String, dynamic>? skills =
+                  snapshot.data!.data()?['skills'] as Map<String, dynamic>?;
+              final List<dynamic> languageSkills =
+                  snapshot.data!.data()?['skills']['language skills'] ?? [];
+              final List<dynamic> personalSkills =
+                  snapshot.data!.data()?['skills']['personal skills'] ?? [];
+              final List<dynamic> professionalSkills =
+                  snapshot.data!.data()?['skills']['professional skills'] ?? [];
+              Map<String, dynamic>? experience =
+                  snapshot.data!.data()?['experiences']['experience']
+                      as Map<String, dynamic>?;
+              Map<String, dynamic>? education =
+                  snapshot.data!.data()?['education'] as Map<String, dynamic>?;
+
+              String startDate = formatTimestamp(experience?['startDte']);
+              String finalDate = formatTimestamp(experience?['End date']);
               // print(otherData);
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,20 +222,28 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                       height: 20,
                     ),
                     Text(
-                      'Ablante daniel',
+                      '  ${personalInfo?['first name']} ${personalInfo?['last name']}',
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
-                    Text('software engineer'),
-                    Text('institution'),
+                    // Text('software engineer'),
+                    // Text('institution'),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        TextButton(onPressed: () {}, child: Text('Edit')),
-                        TextButton.icon(
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 4),
+                          child: Text('${education?['institution']}'),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
                             onPressed: () {},
-                            icon: Icon(Icons.download),
-                            label: Text('Download CV')),
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.grey,
+                            ))
                       ],
                     ),
                     // Container(
@@ -219,7 +252,25 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                     // decoration:
                     //     BoxDecoration(border: Border.all(color: Colors.blueAccent)),
                     //  child:
-
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 4),
+                          child: Text(
+                              '${education?['levelOfEducation']} in ${education?['fieldOfStudy']}'),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.grey,
+                            ))
+                      ],
+                    ),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
                       padding:
@@ -246,7 +297,7 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                             ],
                           ),
                           Text(
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                            otherData?['about me'],
                             style: TextStyle(fontSize: 17),
                           ),
                         ],
@@ -299,7 +350,7 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                                 spacing: 8.0,
                                 runSpacing: 4.0,
                                 children: [
-                                  ...allSkills.map(
+                                  ...professionalSkills.map(
                                     (skill) => Chip(
                                       labelStyle:
                                           TextStyle(color: Colors.white),
@@ -359,7 +410,7 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                                     spacing: 8.0,
                                     runSpacing: 4.0,
                                     children: [
-                                      ...allSkills.map(
+                                      ...personalSkills.map(
                                         (skill) => Chip(
                                           deleteIconColor: Colors.red,
                                           label: Text(skill),
@@ -418,7 +469,7 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                                 spacing: 8.0,
                                 runSpacing: 4.0,
                                 children: [
-                                  ...allSkills.map(
+                                  ...languageSkills.map(
                                     (skill) => Chip(
                                       backgroundColor:
                                           Color.fromARGB(255, 48, 214, 226),
@@ -469,8 +520,9 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                             // leading: CircleAvatar(
                             //   backgroundImage: AssetImage('assets/images/logo1.jpg'),
                             // ),
-                            title: Text('Web Developer'),
-                            subtitle: Text('ABC Company, Jan 2020 - Present'),
+                            title: Text(experience?['job title']),
+                            subtitle: Text(
+                                '${experience?['company']},${startDate} - ${startDate}'),
                             trailing: Icon(Icons.edit),
                           ),
                           Divider(),
@@ -518,8 +570,8 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                             //   backgroundImage:
                             //       AssetImage('assets/images/university_logo.jpg'),
                             // ),
-                            title:
-                                Text('Bachelor of Science in Computer Science'),
+                            title: Text(
+                                'Bachelor in ${education?['fieldOfStudy']} '),
                             subtitle:
                                 Text('University of ABC, Sep 2014 - May 2018'),
                           ),

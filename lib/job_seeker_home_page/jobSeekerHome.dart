@@ -21,6 +21,7 @@ import '../Employers/models/jobs_model.dart';
 import '../hompage.dart';
 import './job_list.dart';
 import 'favorites.dart';
+import './jobSeekerNotification.dart';
 
 class home extends StatefulWidget {
   static const routeName = '/home';
@@ -31,10 +32,11 @@ class home extends StatefulWidget {
 }
 
 class _homeState extends State<home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Map<String, dynamic>> _pages = [
     {'page': JobsList(), 'title': Text('jobs')},
     {'page': Favorite(), 'title': Text('SavedJobs')},
-    {'page': Profile(), 'title': Text('profile')},
+    {'page': JobSeekerNotification(), 'title': Text('profile')},
     // {'page': EmpNotification(), 'title': Text('Notification')}
   ];
 
@@ -93,9 +95,16 @@ class _homeState extends State<home> {
         return false;
       },
       child: Scaffold(
+        key: _scaffoldKey,
         resizeToAvoidBottomInset: false,
-        drawer: Drawer(
-          child: Drower(),
+        drawer: Container(
+          height: MediaQuery.of(context).size.height * 0.85,
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Drawer(
+              child: Drower(),
+            ),
+          ),
         ),
         appBar: AppBar(
           title: _pages[_selectedIndex]['title'],
@@ -152,14 +161,4 @@ class _homeState extends State<home> {
 //   }
 // }
 
-class Profile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Notification",
-        style: TextStyle(fontSize: 24),
-      ),
-    );
-  }
-}
+

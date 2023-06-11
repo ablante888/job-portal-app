@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:project1/Employers/Employers_account/emp_register.dart';
+import 'package:project1/Employers/Employers_account/emp_verify.dart';
 import 'package:project1/Employers/bridgeTOemp_home_page.dart';
 import 'package:project1/Employers/emp_profile/emp_form.dart';
 import 'package:project1/Employers/home_page/applyers_detail.dart';
+import 'package:project1/Employers/home_page/candidateProfile.dart';
 import 'package:project1/Employers/home_page/detail_page.dart';
 import 'package:project1/Employers/home_page/emp_home_page.dart';
 import 'package:project1/Employers/manage_posts/edit_posts.dart';
 import 'package:project1/Employers/manage_posts/manage_post.dart';
 import 'package:project1/hompage.dart';
+import 'package:project1/job_seeker_home_page/applied_jobs.dart';
 import 'package:project1/profile/job_seeker_view_profile.dart';
 import 'package:project1/profile/personal_info.dart';
+import 'package:project1/start_page.dart';
 import 'package:project1/user_account/login.dart';
 import 'package:project1/user_account/utils.dart';
 import 'package:provider/provider.dart';
@@ -110,6 +114,10 @@ class MyApp extends StatelessWidget {
         HomePage.routeName: ((context) => HomePage()),
         ApplicantPage.routeName: ((context) => ApplicantPage()),
         EditJobPostingForm.routName: ((context) => EditJobPostingForm()),
+        candidateProfile.routeName: ((context) => candidateProfile()),
+        StartPage.routName: (context) => StartPage(),
+        Applied_jobs_list.routeName: (context) => Applied_jobs_list(),
+        VerifyEmpEmail.routeName: (context) => VerifyEmpEmail(),
         // JobDetailPage.routName: (context) => JobDetailPage(),
         //   ProfilePageView.routeName: ((context) => ProfilePageView())
       },
@@ -145,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Hulu Jobs'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -286,6 +294,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     )),
               ],
             ),
+            SizedBox(
+              height: 25,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 100),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                      onPressed: () {
+                        Navigator.popAndPushNamed(context, home.routeName);
+                      },
+                      icon: Icon(Icons.skip_next),
+                      label: Text('Skip')),
+                ],
+              ),
+            )
           ],
         ),
       ),

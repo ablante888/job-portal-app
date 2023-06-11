@@ -24,10 +24,12 @@ class signUp extends StatefulWidget {
 class _signUpState extends State<signUp> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final passwordController1 = TextEditingController();
+  final passwordController2 = TextEditingController();
   void dispose() {
     emailController.dispose();
-    passwordController.dispose();
+    passwordController1.dispose();
+    passwordController2.dispose();
     super.dispose();
   }
 
@@ -44,7 +46,7 @@ class _signUpState extends State<signUp> {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: emailController.text.trim(),
-              password: passwordController.text.trim())
+              password: passwordController1.text.trim())
           .then((result) {
         FirebaseFirestore.instance
             .collection('job-seeker')
@@ -93,7 +95,7 @@ class _signUpState extends State<signUp> {
               child: Container(
                 padding: EdgeInsets.all(12),
                 width: (MediaQuery.of(context).size.width) * 3 / 4,
-                height: 400,
+                height: 500,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -151,7 +153,7 @@ class _signUpState extends State<signUp> {
                       height: 15,
                     ),
                     TextFormField(
-                      controller: passwordController,
+                      controller: passwordController1,
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                         label: Text('password'),
@@ -176,10 +178,47 @@ class _signUpState extends State<signUp> {
                     SizedBox(
                       height: 10,
                     ),
+                    Text('Verify Password'),
+                    TextFormField(
+                        controller: passwordController2,
+                        keyboardType: TextInputType.visiblePassword,
+                        decoration: InputDecoration(
+                          label: Text('password'),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          value != null && value.length < 6
+                              ? 'Enter at least 6 characters'
+                              : null;
+                          if (passwordController2.text !=
+                              passwordController1.text) {
+                            return 'Password is not match';
+                          }
+                        }),
+                    SizedBox(
+                      height: 15,
+                    ),
                     ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                             minimumSize: Size.fromHeight(50)),
-                        onPressed: signUp,
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState?.save();
+                            signUp();
+                          }
+                        },
                         icon: Icon(
                           Icons.person_add,
                           size: 30.0,
@@ -188,19 +227,19 @@ class _signUpState extends State<signUp> {
                     SizedBox(
                       height: 24,
                     ),
-                    RichText(
-                        text: TextSpan(
-                            style: TextStyle(color: Colors.black),
-                            text: 'already have accont ?  ',
-                            children: [
-                          TextSpan(
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = widget.onclickedSignUp,
-                              text: 'Sign in',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  decoration: TextDecoration.underline))
-                        ]))
+                    // RichText(
+                    //     text: TextSpan(
+                    //         style: TextStyle(color: Colors.black),
+                    //         text: 'already have accont ?  ',
+                    //         children: [
+                    //       TextSpan(
+                    //           recognizer: TapGestureRecognizer()
+                    //             ..onTap = widget.onclickedSignUp,
+                    //           text: 'Sign in',
+                    //           style: TextStyle(
+                    //               color: Colors.blue,
+                    //               decoration: TextDecoration.underline))
+                    //     ]))
                   ],
                 ),
               ),

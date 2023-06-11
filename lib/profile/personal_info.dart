@@ -397,7 +397,7 @@ class _personal_infoState extends State<personal_info> {
                             PersonalInfoProvider provider =
                                 PersonalInfoProvider();
                             provider.personalInfo = personal_info;
-                            // savePesonalInfo(personal_info);
+                            //savePesonalInfo(personal_info);
                             Utils.showSnackBar(
                                 'sucessfully saved', Colors.green);
                           } on FirebaseException catch (e) {

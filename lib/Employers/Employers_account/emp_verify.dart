@@ -10,6 +10,7 @@ import '../bridgeTOemp_home_page.dart';
 import 'emp_auth_page.dart';
 
 class VerifyEmpEmail extends StatefulWidget {
+  static const routeName = '/VerifyEmpEmail';
   const VerifyEmpEmail({Key? key}) : super(key: key);
 
   @override

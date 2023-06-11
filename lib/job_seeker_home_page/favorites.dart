@@ -35,6 +35,12 @@ class _FavoriteState extends State<Favorite> {
 
   @override
   Widget build(BuildContext context) {
+    if (getCurrentUserUid().isEmpty) {
+      // User not logged in, show a placeholder widget
+      return Center(
+        child: Text('Please log in to save jobs.'),
+      );
+    }
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('job-seeker')
@@ -78,26 +84,65 @@ class _FavoriteState extends State<Favorite> {
                         child: Card(
                           margin:
                               EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                          elevation: 2, // Add elevation for a shadow effect
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           child: ListTile(
                             shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.black, width: 1),
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            style: ListTileStyle.drawer,
-                            leading: CircleAvatar(
-                              child: Icon(Icons.person),
+                            contentPadding: EdgeInsets.all(10),
+                            // leading: CircleAvatar(
+                            //   backgroundColor: Colors
+                            //       .blue, // Set a background color for the avatar
+                            //   child: Icon(Icons.person, color: Colors.white),
+                            // ),
+                            title: Row(
+                              children: [
+                                Icon(
+                                  Icons.title,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  document['title'],
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            //  leading: new Text(document['job category']),
-                            title: new Text(document['title']),
-                            subtitle: new Text(document['jobTitle']),
+                            subtitle: Row(
+                              // mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // Text(
+                                //   document['jobTitle'],
+                                //   style: TextStyle(fontSize: 16.0),
+                                // ),
+                                Chip(label: Text(document['job category'])),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Chip(label: Text(document['location'])),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Chip(
+                                    label: Text(
+                                        '${document['employment type']} ')),
+                              ],
+                            ),
                             trailing: IconButton(
-                                onPressed: () {
-                                  deleteFavorite(document['id']);
-                                },
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                )),
+                              onPressed: () {
+                                deleteFavorite(document['id']);
+                              },
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
                           ),
                         ),
                       );

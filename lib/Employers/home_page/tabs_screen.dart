@@ -1,3 +1,4 @@
+import 'package:project1/Employers/home_page/menuButton.dart';
 import 'package:project1/hompage.dart';
 
 import 'emp_home_page.dart';
@@ -8,6 +9,8 @@ import 'posted_jobs.dart';
 import 'notification.dart';
 import 'candidates.dart';
 
+class abc {}
+
 class TabsScreen extends StatefulWidget {
   static const routeName = '/TabsScreen';
   const TabsScreen({Key? key}) : super(key: key);
@@ -17,12 +20,22 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
+  //final List<String> menu = ['Update profile', 'Logout'];
+
   final List<Map<String, dynamic>> _pages = [
-    {'page': EmpHomePage(), 'title': Text('home')},
+    {
+      'page': EmpHomePage(),
+      'title': Text('home'),
+      'action': CircleAvatar(
+        backgroundImage: AssetImage('assets/images/profile2.jpeg'),
+        child: popUpMenu(),
+      ),
+    },
     {'page': Posted_jobs(), 'title': Text('jobs posted')},
     {'page': candidates(), 'title': Text('candidates')},
     {'page': EmpNotification(), 'title': Text('Notification')}
   ];
+
   int selecetedPageIndex = 0;
   void _selectPage(int index) {
     setState(() {
@@ -35,6 +48,9 @@ class _TabsScreenState extends State<TabsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: _pages[selecetedPageIndex]['title'],
+        actions: [
+          _pages[selecetedPageIndex]['action'] ?? Container(),
+        ],
       ),
       body: _pages[selecetedPageIndex]['page'],
       bottomNavigationBar: BottomNavigationBar(

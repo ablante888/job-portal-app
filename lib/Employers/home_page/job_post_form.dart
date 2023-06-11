@@ -37,6 +37,8 @@ class _JobPostingFormState extends State<JobPostingForm> {
     '2 years',
     '3 years',
     '5 years',
+    '10 years',
+    '> 10 years'
   ];
   List educationLevel = ['bachelor', 'MSC', 'PHD'];
   String jobCategorySelected = '';

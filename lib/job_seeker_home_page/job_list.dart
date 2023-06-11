@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:project1/Employers/models/jobs_model.dart';
 import 'package:project1/job_seeker_home_page/filter.dart';
 
 import '../Employers/home_page/detail_page.dart';
+import 'package:rxdart/rxdart.dart';
 
 class JobsList extends StatefulWidget {
   @override
@@ -20,6 +22,7 @@ class _JobsListState extends State<JobsList> {
   bool dropDownSelected = false;
   var selectedValue;
   List recommendedJobs = [];
+  bool selectRecommended = false;
   String selectedCategory = 'All';
   List<String> categories = [
     'All',
@@ -27,8 +30,8 @@ class _JobsListState extends State<JobsList> {
     'City',
     'Employment type',
     'Education level',
-    'Company name'
   ];
+
   bool seleceByCategory = false;
   var category;
   bool isJobTitleMatched = false;
@@ -90,7 +93,7 @@ class _JobsListState extends State<JobsList> {
   final List<String> cities = [
     'Bahirdar',
     'Gonder',
-    'Addiss Ababa',
+    'Addis Ababa',
     'Mekele',
     'Dere Dawa',
     'Hawasa',
@@ -135,86 +138,19 @@ class _JobsListState extends State<JobsList> {
   }
 
   List<QueryDocumentSnapshot> filteredJobs = [];
-  // void openAdvancedFilterScreen(List items) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Advanced Filter'),
-  //         content: Text('This is the advanced filter screen.'),
-  //         actions: [
-  //           Container(
-  //             height: 400,
-  //             width: 400,
-  //             child: SingleChildScrollView(
-  //               child: Column(
-  //                 children: [
-  //                   SizedBox(
-  //                     height: 300, // Adjust the height as needed
-  //                     child: GridView.builder(
-  //                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //                         crossAxisCount: 2,
-  //                         mainAxisSpacing: 8,
-  //                         crossAxisSpacing: 8,
-  //                         childAspectRatio: 1,
-  //                       ),
-  //                       itemBuilder: (BuildContext context, int index) {
-  //                         return GestureDetector(
-  //                           onTap: () {
-  //                             setState(() {
-  //                               // seleceByCategory = true;
-  //                               selectedValue = items[index];
-  //                             });
-  //                             Navigator.of(context).pop();
-  //                           },
-  //                           child: Container(
-  //                             height: 100,
-  //                             width: 100,
-  //                             alignment: Alignment.center,
-  //                             decoration: BoxDecoration(
-  //                               color: Colors.grey[200],
-  //                               borderRadius: BorderRadius.circular(8),
-  //                             ),
-  //                             child: Text(
-  //                               items[index],
-  //                               style: TextStyle(
-  //                                 fontSize: 16,
-  //                                 fontWeight: FontWeight.w500,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         );
-  //                       },
-  //                       itemCount: items.length,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //             child: Text('Close'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
-  void updateSelectedValue(String value) {
+  void updateSelectedValue(String value, bool abc) {
     setState(() {
       selectedValue = value;
     });
   }
 
-  void openAlertDialog(List selectedItem) {
+  void openAlertDialog(List selectedItem, IconData? icon) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return OverlayScreen(
+          icon: icon,
           callback: updateSelectedValue,
           items: selectedItem,
         );
@@ -326,9 +262,13 @@ class _JobsListState extends State<JobsList> {
                 scrollDirection: Axis.horizontal,
                 itemCount: recentJobs.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  // crossAxisCount: 1,
+                  // mainAxisSpacing: 8,
+                  // childAspectRatio: 1,
                   crossAxisCount: 1,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1,
+                  mainAxisSpacing: 16.0,
+                  crossAxisSpacing: 16.0,
+                  childAspectRatio: 1.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
@@ -342,13 +282,32 @@ class _JobsListState extends State<JobsList> {
                       // width: MediaQuery.of(context).size.width / 2,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
+                        // color: Colors.blue,
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color.fromARGB(255, 51, 224, 255), // Start color
+                            Color.fromARGB(255, 55, 0, 255), // End color
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(15.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: Text(
                         recentJobs[index],
                         style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
+                          color: Colors.white,
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   );
@@ -367,6 +326,7 @@ class _JobsListState extends State<JobsList> {
                           setState(() {
                             isJobTitleMatched = false;
                             seleceByCategory = false;
+                            selectRecommended = false;
                           });
                         },
                         child: Text('See all')),
@@ -398,15 +358,19 @@ class _JobsListState extends State<JobsList> {
                                 case 'All':
                                   return null;
                                 case 'Region':
-                                  return openAlertDialog(Regions);
+                                  return openAlertDialog(Regions, Icons.public);
                                 case 'City':
-                                  return openAlertDialog(cities);
+                                  return openAlertDialog(
+                                      cities, Icons.location_city);
                                 case 'Education level':
-                                  return openAlertDialog(educationLevel);
+                                  return openAlertDialog(
+                                      educationLevel, Icons.school);
                                 case 'Employment type':
-                                  return openAlertDialog(employmentType);
-                                case 'Company name':
-                                  return openAlertDialog(companyName);
+                                  return openAlertDialog(
+                                      employmentType, Icons.work);
+                                // case 'Company name':
+                                //   return openAlertDialog(
+                                //       companyName, Icons.business);
 
                                 default:
                                   return null;
@@ -434,49 +398,89 @@ class _JobsListState extends State<JobsList> {
                               .collection('jobseeker-profile')
                               .doc('profile')
                               .snapshots();
+                          setState(() {
+                            selectRecommended = true;
+                          });
                         },
                         child: Text('Recommended')),
                   ),
                 ],
               ),
             ),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('employers-job-postings')
-                  .doc('post-id')
-                  .collection('job posting')
-                  .snapshots(),
+            StreamBuilder<List<dynamic>>(
+              stream: CombineLatestStream.list([
+                FirebaseFirestore.instance
+                    .collection('job-seeker')
+                    .doc(getCurrentUserUid())
+                    .collection('jobseeker-profile')
+                    .doc('profile')
+                    .snapshots(),
+                FirebaseFirestore.instance
+                    .collection('employers-job-postings')
+                    .doc('post-id')
+                    .collection('job posting')
+                    .snapshots(),
+              ]),
               builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                  AsyncSnapshot<List<dynamic>> snapshot) {
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text('Loading...');
                 }
-
-                List<DocumentSnapshot> postedJobs = [];
-                if (snapshot.hasData) {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  postedJobs = querySnapshot.docs.toList();
-                  // companyName = querySnapshot.docs.where((doc) {
-                  //   String company_name = doc['company']['name'];
-                  //   return company_name != null;
-                  // }).toList();
-                  // companyName=postedJobs.where((doc) {});
+                DocumentSnapshot profileData =
+                    snapshot.data?[0]; // Get the profile data
+                Map<String, dynamic>? otherData =
+                    (profileData.data() as Map<String, dynamic>)['other-data']
+                        as Map<String, dynamic>?;
+                //   print('other data is ${otherData}');
+                // Map<String, dynamic>? otherData = snapshot.data?[0]
+                //     .data()!['other-data'] as Map<String, dynamic>?;
+                Map<String, dynamic>? personalInfo = snapshot.data?[0]!
+                    .data()?['personal-info'] as Map<String, dynamic>?;
+                // print('personal info is ${personalInfo}');
+                Map<String, dynamic>? skills = snapshot.data?[0]!
+                    .data()?['skills'] as Map<String, dynamic>?;
+                // final List<dynamic> languageSkills =
+                //     snapshot.data?[0]!.data()?['skills']['language skills'] ??
+                //         [];
+                // final List<dynamic> personalSkills =
+                //     snapshot.data?[0]!.data()?['skills']['personal skills'] ??
+                //         [];
+                // final List<dynamic> professionalSkills = snapshot.data?[0]!
+                //         .data()?['skills']['professional skills'] ??
+                //     [];
+                // Map<String, dynamic>? experience =
+                //     snapshot.data?[0]!.data()?['experiences']['experience']
+                //         as Map<String, dynamic>?;
+                Map<String, dynamic>? education = snapshot.data?[0]!
+                    .data()?['education'] as Map<String, dynamic>?;
+                QuerySnapshot jobPostings = snapshot.data?[1];
+                if (jobPostings != null && jobPostings.docs.isNotEmpty) {
+                  // Access the job postings documents
+                  postedJobs = jobPostings.docs.toList();
                 }
-                if (snapshot.hasData && seleceByCategory == true) {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  postedJobs = querySnapshot.docs.where((doc) {
+                if (jobPostings != null &&
+                    jobPostings.docs.isNotEmpty &&
+                    seleceByCategory == true) {
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  //  print(AllpostedJobs.first.data());
+                  // QuerySnapshot querySnapshot = snapshot.data!;
+                  postedJobs = AllpostedJobs.where((doc) {
                     // Filter the jobs by category
                     return doc['job category'] == category;
                   }).toList();
                 }
+                //search field operation
                 if (searchQuery.isNotEmpty) {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
+                  // QuerySnapshot querySnapshot = snapshot.data!;
 
-                  postedJobs = allJobs.where((doc) {
+                  //  List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  postedJobs = AllpostedJobs.where((doc) {
                     String title = doc['title'].toString().toLowerCase();
                     String location = doc['location'].toString().toLowerCase();
                     String category =
@@ -489,24 +493,106 @@ class _JobsListState extends State<JobsList> {
                   }).toList();
                   // }
                 }
+                // List<QueryDocumentSnapshot> postedJobs = jobPostingsSnapshot.docs;
+                List<QueryDocumentSnapshot> recommendedJobs = [];
+                if (selectRecommended) {
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  postedJobs = AllpostedJobs.where((doc) {
+                    String jobTitle =
+                        doc['title'].toString().toLowerCase().trim();
+                    String location =
+                        doc['location'].toString().toLowerCase().trim();
+                    String educationLevel =
+                        doc['education level'].toString().toLowerCase();
+
+                    String experienceLevel =
+                        doc['experience level'].toString().toLowerCase();
+                    print(
+                        'education level required is: ${otherData?['Experience level'].toString().toLowerCase()}');
+                    print('education level required is: ${experienceLevel}');
+                    print('education level required is: ${jobTitle}');
+                    print(
+                        'education level required is: ${otherData?['preferred job'].toString().toLowerCase()}');
+                    String salary = doc['salary'].toString().toLowerCase();
+                    //  String category =
+                    //     doc['job category'].toString().toLowerCase().trim();
+                    print(
+                        'boolian value is : ${jobTitle == otherData?['preferred job'].toString().toLowerCase() && experienceLevel == otherData?['Experience level'].toString().toLowerCase()}');
+                    bool isMatching = (jobTitle ==
+                            otherData?['preferred job']
+                                ?.toString()
+                                .toLowerCase()) &&
+                        (experienceLevel ==
+                            otherData?['experience level']
+                                ?.toString()
+                                .toLowerCase());
+
+                    print('boolean value is: $isMatching');
+                    String lowercaseQuery = searchQuery.toLowerCase();
+                    return jobTitle ==
+                                otherData?['preferred job']
+                                    .toString()
+                                    .toLowerCase()
+                                    .replaceAll(' ', '') &&
+                            location ==
+                                personalInfo?['city']
+                                    .toString()
+                                    .toLowerCase()
+                                    .replaceAll(' ', '') ||
+                        jobTitle ==
+                                otherData?['preferred job']
+                                    .toString()
+                                    .toLowerCase() &&
+                            educationLevel == education?['levelOfEducation'] ||
+                        jobTitle ==
+                                otherData?['preferred job']
+                                    .toString()
+                                    .toLowerCase() &&
+                            experienceLevel == otherData?['Experience level'] ||
+                        //if all are matched
+                        jobTitle == otherData?['preferred job'] &&
+                            salary == otherData?['Expected salary'] ||
+                        jobTitle == otherData?['preferred job'] &&
+                            location == personalInfo?['city'] &&
+                            educationLevel == education?['levelOfEducation'] &&
+                            experienceLevel == otherData?['Experience level'] &&
+                            salary == otherData?['Expected salary'];
+                  }).toList();
+                }
+                print('this is posted jobs data : ${postedJobs}');
+                if (selectedCategory == 'City') {
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                }
                 // if (dropDownSelected) {
                 //  if (selectedCategory == 'All') {}
                 if (selectedCategory == 'City') {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
-                  postedJobs = allJobs.where((doc) {
-                    String city =
-                        doc['company']['city'].toString().toLowerCase();
+                  // QuerySnapshot querySnapshot = snapshot.data!;
+                  // List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  postedJobs = AllpostedJobs.where((doc) {
+                    String city = doc['location']
+                        .toString()
+                        .toLowerCase()
+                        .replaceAll(' ', '');
                     print('city :${city}');
                     // String lowercaseQuery = selectedCategory.toLowerCase();
-                    return city == selectedValue.toLowerCase();
+                    return city ==
+                        selectedValue
+                            .toString()
+                            .toLowerCase()
+                            .replaceAll(' ', '');
                   }).toList();
                 }
 
                 if (selectedCategory == 'Employment type') {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
-                  postedJobs = allJobs.where((doc) {
+                  // QuerySnapshot querySnapshot = snapshot.data!;
+                  // List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  postedJobs = AllpostedJobs.where((doc) {
                     String emplyment_type =
                         doc['employment type'].toString().toLowerCase();
 
@@ -515,24 +601,59 @@ class _JobsListState extends State<JobsList> {
                   }).toList();
                 }
                 if (selectedCategory == 'Education level') {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
-                  postedJobs = allJobs.where((doc) {
+                  // QuerySnapshot querySnapshot = snapshot.data!;
+                  // List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  postedJobs = AllpostedJobs.where((doc) {
                     String education_level =
                         doc['education level'].toString().toLowerCase();
 
                     return education_level == selectedValue.toLowerCase();
                   }).toList();
                 }
+
                 if (selectedCategory == 'Company name') {
-                  QuerySnapshot querySnapshot = snapshot.data!;
-                  List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
-                  postedJobs = allJobs.where((doc) {
+                  // QuerySnapshot querySnapshot = snapshot.data!;
+                  // List<DocumentSnapshot> allJobs = querySnapshot.docs.toList();
+                  List<QueryDocumentSnapshot> AllpostedJobs =
+                      jobPostings.docs.toList();
+                  postedJobs = AllpostedJobs.where((doc) {
                     String company_name =
                         doc['company']['name'].toString().toLowerCase();
 
                     return company_name == selectedValue.toLowerCase();
                   }).toList();
+                }
+                if (selectRecommended) {
+                  Stream<DocumentSnapshot<Map<String, dynamic>>> abc =
+                      FirebaseFirestore.instance
+                          .collection('job-seeker')
+                          .doc(getCurrentUserUid())
+                          .collection('jobseeker-profile')
+                          .doc('profile')
+                          .snapshots();
+
+                  abc.listen((DocumentSnapshot<Map<String, dynamic>> snapshot) {
+                    if (snapshot.exists) {
+                      Map<String, dynamic> data = snapshot.data()!;
+
+                      // Accessing individual fields
+                      String name = data['name'];
+                      String email = data['email'];
+                      int age = data['age'];
+                      List<String> skills = List<String>.from(data['skills']);
+
+                      // Do something with the fields
+                      print('Name: $name');
+                      print('Email: $email');
+                      print('Age: $age');
+                      print('Skills: $skills');
+
+                      // You can also pass the data to your recommendation function
+                      //  recommendJob(data);
+                    }
+                  });
                 }
 
                 return SafeArea(
@@ -607,22 +728,25 @@ class _JobsListState extends State<JobsList> {
                                     ),
                                   ],
                                 ),
-                                trailing: Container(
-                                  height: 20,
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 5.0,
-                                    horizontal: 5.0,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  child: Text(
-                                    getPostedTime(document['posted time']),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.bold,
+                                trailing: Flexible(
+                                  fit: FlexFit.loose,
+                                  child: Container(
+                                    height: 20,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 5.0,
+                                      horizontal: 5.0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Text(
+                                      getPostedTime(document['posted time']),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -640,5 +764,13 @@ class _JobsListState extends State<JobsList> {
         ),
       ),
     );
+  }
+}
+
+class converToDate {
+  static const DATE_FORMAT = 'dd/MM/yyyy';
+  String formattedDate(DateTime dateTime) {
+    print('dateTime ($dateTime)');
+    return DateFormat(DATE_FORMAT).format(dateTime);
   }
 }

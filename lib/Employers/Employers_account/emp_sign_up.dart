@@ -25,10 +25,12 @@ class EmpsignUp extends StatefulWidget {
 class _EmpsignUpState extends State<EmpsignUp> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  final passwordController1 = TextEditingController();
+  final passwordController2 = TextEditingController();
   void dispose() {
     emailController.dispose();
-    passwordController.dispose();
+    passwordController1.dispose();
+    passwordController2.dispose();
     super.dispose();
   }
 
@@ -45,7 +47,7 @@ class _EmpsignUpState extends State<EmpsignUp> {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: emailController.text.trim(),
-              password: passwordController.text.trim())
+              password: passwordController1.text.trim())
           .then((result) {
         FirebaseFirestore.instance
             .collection('employer')
@@ -129,7 +131,7 @@ class _EmpsignUpState extends State<EmpsignUp> {
                   height: 15,
                 ),
                 TextFormField(
-                  controller: passwordController,
+                  controller: passwordController1,
                   keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(
                     label: Text('password'),
@@ -154,29 +156,66 @@ class _EmpsignUpState extends State<EmpsignUp> {
                 SizedBox(
                   height: 10,
                 ),
+                Text('Verify Password'),
+                TextFormField(
+                    controller: passwordController2,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      label: Text('password'),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      value != null && value.length < 6
+                          ? 'Enter at least 6 characters'
+                          : null;
+                      if (passwordController2.text !=
+                          passwordController1.text) {
+                        return 'Password is not match';
+                      }
+                    }),
+                SizedBox(
+                  height: 10,
+                ),
                 ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                         minimumSize: Size.fromHeight(50)),
-                    onPressed: EmpsignUp,
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState?.save();
+                        EmpsignUp();
+                      }
+                    },
                     icon: Icon(Icons.person_add),
                     label: Text('Sign up')),
                 SizedBox(
                   height: 24,
                 ),
-                RichText(
-                    text: TextSpan(
-                        style: TextStyle(color: Colors.black),
-                        text: 'already have accont ?  ',
-                        children: [
-                      TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = widget.onclickedEmpSignUp,
-                          text: 'Sign in',
-                          style: TextStyle(
-                              // fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                              decoration: TextDecoration.underline)),
-                    ])),
+                //  RichText(
+                // text: TextSpan(
+                //     style: TextStyle(color: Colors.black),
+                //     text: 'already have accont ?  ',
+                //     children: [
+                //   TextSpan(
+                //       recognizer: TapGestureRecognizer()
+                //         ..onTap = widget.onclickedEmpSignUp,
+                //       text: 'Sign in',
+                //       style: TextStyle(
+                //           // fontWeight: FontWeight.bold,
+                //           color: Colors.blue,
+                //           decoration: TextDecoration.underline)),
+                // ])),
               ],
             ),
           ),

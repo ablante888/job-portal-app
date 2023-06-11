@@ -13,7 +13,7 @@ import '../../jobSeekerModel/job_seeker_profile_model.dart';
 class Job_detail extends StatefulWidget {
   int index;
   DocumentSnapshot<Object?> job;
-  DocumentSnapshot<Object?> get Job => Job;
+  // DocumentSnapshot<Object?> get Job => Job;
   Job_detail({Key? key, required this.index, required this.job})
       : super(key: key);
 
@@ -42,28 +42,62 @@ class _Job_detailState extends State<Job_detail> {
   @override
   void initState() {
     super.initState();
-    _loadState();
+    _loadState(widget.job);
+    _loadapplicationState(widget.job);
   }
 
-  Future<void> _loadState() async {
-    final state = await StatePersistence.getState('favoriteState');
+  Future<void> _loadState(DocumentSnapshot<Object?> job) async {
+    final state = await StatePersistence.getState(widget.job['job id']);
     setState(() {
-      favorite = state as bool;
+      if (state != null) {
+        favorite = state as bool;
+      }
     });
   }
 
-  Future<void> _saveState() async {
-    await StatePersistence.saveState('favoriteState', favorite);
+  Future<void> _loadapplicationState(DocumentSnapshot<Object?> job) async {
+    final state = await StatePersistence.getapplicationState(
+        job['job id'] + 'application');
+    setState(() {
+      if (state != null) {
+        isButtonDisabled = state as bool;
+      }
+    });
   }
 
+  Future<void> _saveState(DocumentSnapshot<Object?> job) async {
+    await StatePersistence.saveState(job['job id'], favorite);
+  }
+
+  Future<void> _saveapplicationState(DocumentSnapshot<Object?> job) async {
+    await StatePersistence.saveapplicatonState(
+        job['job id'] + 'application', isButtonDisabled);
+  }
+
+  bool isLoggedIn = false;
   String randomText =
       '   Porttitor eget dolor morbi non arcu risus. Eget arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt ornare massa. At volutpat diam ut venenatis tellus. Tortor at auctor urna nunc id cursus metus aliquam eleifend. Amet commodo nulla facilisi nullam vehicula ipsum a. Vitae nunc sed velit dignissim sodales ut eu. Facilisis leo vel fringilla est ullamcorper. Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis. Tempus egestas sed sed risus pretium quam vulputate dignissim suspendisse. Arcu non odio euismod lacinia at quis risus. Ante metus dictum at tempor commodo ullamcorper a lacus vestibulum. Ut placerat orci nulla pellentesque dignissim. Sed nisi lacus sed viverra tellus in. Posuere morbi leo urna molestie at elementum eu. Nibh sit amet commodo nulla facilisi nullam vehicula ipsum a. Non nisi est sit amet facilisis magna etiam tempor orci. Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque purus semper. Mauris in aliquam sem fringilla ut morbi. Vitae nunc sed velit dignissim sodales ut eu. Dignissim diam quis enim lobortis scelerisque fermentum dui faucibus. Urna molestie at elementum eu facilisis sed odio morbi quis. Odio ut sem nulla pharetra diam. Nam libero justo laoreet sit amet. Mauris in aliquam sem fringilla ut morbi. Massa tincidunt nunc pulvinar sapien et. A lacus vestibulum sed arcu non odio euismod lacinia. Maecenas volutpat blandit aliquam etiam. Nunc sed id semper risus. Vel pharetra vel turpis nunc eget lorem dolor. Tellus rutrum tellus pellentesque eu tincidunt. Cum sociis natoque penatibus et. Sapien nec sagittis aliquam malesuada bibendum. Nulla posuere sollicitudin aliquam ultrices sagittis orci a. Massa vitae tortor condimentum lacinia quis. Odio tempor orci dapibus ultrices in iaculis nunc. Eu augue ut lectus arcu bibendum. Eu consequat ac felis donec et odio. Auctor neque vitae tempus quam pellentesque nec nam. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Lorem ipsum dolor sit amet consectetur adipiscing. Justo eget magna fermentum iaculis eu non diam phasellus vestibulum. Egestas integer eget aliquet nibh. Est ullamcorper eget nulla facilisi etiam dignissim. Feugiat in ante metus dictum.';
   String getCurrentUserUid() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
+      setState(() {
+        isLoggedIn = true;
+        print('the login status is ${isLoggedIn}');
+      });
       return user.uid;
     } else {
       return '';
+    }
+  }
+
+  void checkSignInStatus() {
+    String user = getCurrentUserUid();
+    if (user != null) {
+      // User is signed in.
+      print('User is signed in.');
+    } else {
+      // User is not signed in.
+      print('User is not signed in.');
     }
   }
 
@@ -97,6 +131,7 @@ class _Job_detailState extends State<Job_detail> {
       'experience leve': doc['experience level'],
       // Add other job details as needed
     });
+    // _saveState(doc);
   }
 
 // ).then((docRef) {
@@ -110,28 +145,73 @@ class _Job_detailState extends State<Job_detail> {
   bool isButtonDisabled = false;
 
   void _handleApplyButtonTap(DocumentSnapshot<Object?> doc) {
-    if (!isButtonDisabled) {
-      saveApplication(doc);
+    getCurrentUserUid();
+    if (isLoggedIn) {
+      if (!isButtonDisabled) {
+        saveApplication(doc);
 
-      setState(() {
-        isButtonDisabled = true;
-      });
+        setState(() {
+          isButtonDisabled = true;
+          print('is button dissabled : ${isButtonDisabled}');
+        });
+      } else {
+        // Button already disabled, handle accordingly
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('You already applied.'),
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     } else {
-      // Button already disabled, handle accordingly
+      // User not logged in, handle accordingly
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('you alredy applied.'),
+            title: Text(
+              'Error',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Text(
+              'Please log in to apply.',
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
             actions: [
               TextButton(
-                child: Text('OK'),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue,
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
             ],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            backgroundColor: Colors.white,
+            elevation: 5,
           );
         },
       );
@@ -185,16 +265,6 @@ class _Job_detailState extends State<Job_detail> {
   }
 
   Future<void> getData(DocumentSnapshot<Object?> doc) async {
-    // createJobId();
-    // final CollectionReference applicantCollectionReference = FirebaseFirestore
-    //     .instance
-    //     .collection('employers-job-postings')
-    //     .doc('post-id')
-    //     .collection('job posting')
-    //     .doc(doc['job id'])
-    //     .collection("Applicants")
-    //     .doc(applicantId)
-    //     .collection('applicant profile');
     final DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
         await FirebaseFirestore.instance
             .collection('job-seeker')
@@ -211,55 +281,6 @@ class _Job_detailState extends State<Job_detail> {
             .collection("Applicants")
             .doc(getCurrentUserUid());
     applicant_Collection_Reference.set(documentSnapshot.data());
-    // Education educationObject;
-    // Skill skillObject;
-    // PersonalInfo personalInfo_object;
-    // Other otherObject;
-    // final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
-    //     querySnapshot.docs;
-    // docs.first.id;
-    // final Map<String, Map<String, dynamic>> dataMap = {};
-    // for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in docs) {
-    //   final String docId = doc.id;
-
-    //   final Map<String, dynamic> docData = doc.data();
-    //   if (docId == 'Education') {
-    //     education.add(docData);
-    //     educationObject = Education.fromMap(docData);
-    //     applicantCollectionReference.doc(docId).set(docData);
-    //     print('this is education object ${educationObject.institution}');
-    //   } else if (docId == 'skills') {
-    //     skill.add(doc.data());
-
-    //     skillObject = Skill.fromMap(docData);
-    //     applicantCollectionReference.doc(docId).set(docData);
-    //     print('this is education object ${skillObject.languageSkills}');
-    //   } else if (docId == 'other') {
-    //     other.add(doc.data());
-    //     otherObject = Other.fromMap(docData);
-    //     applicantCollectionReference.doc(docId).set(docData);
-    //   } else if (docId == 'personal_info') {
-    //     p_info.add(doc.data());
-    //     personalInfo_object = PersonalInfo.fromJeson(docData);
-
-    //     print('this is education object ${personalInfo_object.city}');
-    //     applicantCollectionReference.doc(docId).set(docData);
-    //   }
-
-    //   print('doc data is : ${education}');
-    //   print('doc data is : ${other}');
-    //   print('doc data is : ${p_info}');
-    //   print('doc data is : ${skill}');
-
-    //   print('$docId=>$docData');
-    //   dataMap[docId] = docData;
-    //   // docData.map((key, value) => null)
-
-    // }
-
-    // String id = personalInfo_object.id;
-
-    // Education ed=education.
   }
 
   List<Map<String, dynamic>> education = [];
@@ -269,9 +290,11 @@ class _Job_detailState extends State<Job_detail> {
 
   @override
   Widget build(BuildContext context) {
-    print('this is the index of listile ${widget.index}');
-    print(widget.job.data());
-
+    // _loadState();
+    // print('this is the index of listile ${widget.index}');
+    // print(widget.job.data());
+    // getCurrentUserUid();
+    print('${isLoggedIn}');
     return Column(
       children: [
         Row(
@@ -327,7 +350,7 @@ class _Job_detailState extends State<Job_detail> {
             Container(
               width: MediaQuery.of(context).size.width / 2 - 20,
               decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: isButtonDisabled ? Colors.grey : Colors.blue,
                   border: Border.all(
                     color: Colors.blue,
                     width: 2,
@@ -377,7 +400,8 @@ class _Job_detailState extends State<Job_detail> {
 
   @override
   void dispose() {
-    _saveState();
+    _saveState(widget.job);
+    _saveapplicationState(widget.job);
     super.dispose();
   }
 }
@@ -398,8 +422,28 @@ class StatePersistence {
     }
   }
 
+  static Future<bool> saveapplicatonState(String key, dynamic value) async {
+    final SharedPreferences prefs2 = await SharedPreferences.getInstance();
+    if (value is String) {
+      return await prefs2.setString(key, value);
+    } else if (value is int) {
+      return await prefs2.setInt(key, value);
+    } else if (value is double) {
+      return await prefs2.setDouble(key, value);
+    } else if (value is bool) {
+      return await prefs2.setBool(key, value);
+    } else {
+      return false;
+    }
+  }
+
   static Future<dynamic> getState(String key) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.get(key);
+    final SharedPreferences prefs2 = await SharedPreferences.getInstance();
+    return prefs2.get(key);
+  }
+
+  static Future<dynamic> getapplicationState(String key) async {
+    final SharedPreferences prefs2 = await SharedPreferences.getInstance();
+    return prefs2.get(key);
   }
 }

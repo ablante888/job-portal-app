@@ -4,6 +4,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:project1/job_seeker_home_page/jobSeekerHome.dart';
 import 'package:project1/profile/personal_info.dart';
+import 'package:project1/user_account/auth_page.dart';
 
 class HomePage extends StatelessWidget {
   static const routeName = '/HomePage';
@@ -15,12 +16,17 @@ class HomePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           FirebaseAuth.instance.signOut();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AuthPage(),
+            ),
+          );
           // Navigator.of(context).
         },
         label: Text('Logout out'),
         icon: Icon(Icons.logout_rounded),
       ),
-      
       appBar: AppBar(
         title: Text('Hulu jobs'),
       ),

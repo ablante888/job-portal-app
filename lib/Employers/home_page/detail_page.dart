@@ -51,7 +51,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints.expand(
-                height: MediaQuery.of(context).size.height * 2,
+                height: MediaQuery.of(context).size.height * 3 / 2 + 200,
                 width: MediaQuery.of(context).size.width),
             child: Container(
               decoration: BoxDecoration(
@@ -92,7 +92,7 @@ class _JobDetailPageState extends State<JobDetailPage> {
                             Padding(
                               padding: EdgeInsets.all(16.0),
                               child: Text(
-                                'Job title!',
+                                widget.job['title'] ?? 'Job title',
                                 style: TextStyle(fontSize: 24.0),
                               ),
                             ),

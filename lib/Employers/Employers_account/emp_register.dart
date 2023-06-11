@@ -4,6 +4,8 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:project1/Employers/Employers_account/emp_sign_up.dart';
+import 'package:project1/user_account/signUp.dart';
 import 'emp_auth_page.dart';
 import 'emp_verify.dart';
 
@@ -25,7 +27,9 @@ class _EmpRegisterState extends State<EmpRegister> {
           if (snapshot.hasData)
             return VerifyEmpEmail();
           else
-            return EmpAuthPage();
+            return EmpsignUp(
+              onclickedEmpSignUp: () {},
+            );
         },
       ),
     );

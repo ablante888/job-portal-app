@@ -26,6 +26,7 @@ import 'package:flutter/src/widgets/framework.dart';
 // //void main() => runApp(Manage_posts());
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project1/Employers/Employers_account/empUtils.dart';
 import 'package:project1/Employers/manage_posts/edit_posts.dart';
 
 import '../home_page/job_post_form.dart';
@@ -47,6 +48,61 @@ class _Manage_postsState extends State<Manage_posts> {
     }
   }
 
+  void deleteJob(String id) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              Row(
+                children: [
+                  Text('Are you sure to delete this job '),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.warning,
+                        color: Colors.red,
+                      ))
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        try {
+                          FirebaseFirestore.instance
+                              .collection('employers-job-postings')
+                              .doc('post-id')
+                              .collection('job posting')
+                              .doc(id)
+                              .delete();
+                          FirebaseFirestore.instance
+                              .collection('employer')
+                              .doc(getCurrentUserUid())
+                              .collection('job posting')
+                              .doc(id)
+                              .delete();
+                          Navigator.of(context).pop();
+                          EmpUtils.showSnackBar(
+                              'Job deleted sucessfuly', Colors.green);
+                        } on FirebaseException catch (e) {
+                          EmpUtils.showSnackBar(e.message, Colors.red);
+                        }
+                      },
+                      child: Text('Delete')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cancel')),
+                ],
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,8 +113,8 @@ class _Manage_postsState extends State<Manage_posts> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('employers-job-postings')
-            .doc('post-id')
+            .collection('employer')
+            .doc(getCurrentUserUid())
             .collection('job posting')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -88,13 +144,26 @@ class _Manage_postsState extends State<Manage_posts> {
                               ),
                               style: ListTileStyle.drawer,
                               leading: CircleAvatar(
-                                child: Icon(Icons.person),
+                                foregroundImage: NetworkImage(document[
+                                        'company']['logoUrl'] ??
+                                    'https://www.bing.com/images/search?view=detailV2&ccid=q182Q4Zy&id=D8C88B9D55DB76A095EADD6BDE4D4DF28EFD9B65&thid=OIP.q182Q4ZyCS-WUHuYGfac4QHaDt&mediaurl=https%3a%2f%2fhitechengineeringindia.com%2fimg%2fheader-img%2fprofile.jpg&cdnurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.ab5f36438672092f96507b9819f69ce1%3frik%3dZZv9jvJNTd5r3Q%26pid%3dImgRaw%26r%3d0&exph=834&expw=1666&q=image+for+company+profile+picture&simid=608015538228691274&FORM=IRPRST&ck=97AE052C55DA4BCF742295A439E9F6CE&selectedIndex=22'),
+
+                                // :child: Icon(Icons.person),
                               ),
                               //  leading: new Text(document['job category']),
                               title: new Text(document['title']),
                               subtitle: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
                                   width: 20,
-                                  child: new Text(document['description'])),
+                                  child: Row(
+                                    children: [
+                                      new Text(document['job category']),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      new Text(document['employment type']),
+                                    ],
+                                  )),
                               trailing: Container(
                                 width: 100,
                                 child: Row(
@@ -110,7 +179,9 @@ class _Manage_postsState extends State<Manage_posts> {
                                           color: Theme.of(context).primaryColor,
                                         )),
                                     IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          deleteJob(document.id);
+                                        },
                                         icon: Icon(
                                           Icons.delete,
                                           color: Theme.of(context).errorColor,
@@ -132,102 +203,3 @@ class _Manage_postsState extends State<Manage_posts> {
     );
   }
 }
-
-// class Manage_posts extends StatefulWidget {
-//   @override
-//   _Manage_postsState createState() => _Manage_postsState();
-// }
-
-// class _Manage_postsState extends State<Manage_posts> {
-//   String getCurrentUserUid() {
-//     User? user = FirebaseAuth.instance.currentUser;
-//     if (user != null) {
-//       return user.uid;
-//     } else {
-//       return '';
-//     }
-//   }
-
-//   Future<List<JobPost>> getJobPostList() async {
-//     List<JobPost> JobPostList = [];
-//     QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-//         .instance
-//         .collection('employer')
-//         .doc(getCurrentUserUid())
-//         .collection('JobPost posting')
-//         .get();
-
-//     snapshot.docs.forEach((doc) {
-//       JobPost job = JobPost.fromJson(doc.data());
-//       JobPostList.add(job);
-//       print('the title of the job is :${JobPostList[0].title}');
-//     });
-
-//     return JobPostList;
-//   }
-
-//   late Future<List<JobPost>> _jobListFuture;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _jobListFuture = getJobPostList();
-//     // print('the title of the job is :${_jobListFuture[0].title}');
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Employer Dashboard'),
-//       ),
-//       body: FutureBuilder<List<JobPost>>(
-//         future: _jobListFuture,
-//         builder: (context, snapshot) {
-//           if (snapshot.hasData) {
-//             return ListView.builder(
-//               itemCount: snapshot.data!.length,
-//               itemBuilder: (context, index) {
-//                 JobPost job = snapshot.data![index];
-//                 return ListTile(
-//                   shape: RoundedRectangleBorder(
-//                     side: BorderSide(color: Colors.black, width: 1),
-//                     borderRadius: BorderRadius.circular(5),
-//                   ),
-//                   title: Text(job.title),
-//                   subtitle: Text(job.description),
-//                   trailing: Text('\$${job.salary}'),
-//                 );
-//               },
-//             );
-//           } else if (snapshot.hasError) {
-//             return Text('${snapshot.error}');
-//           } else {
-//             return CircularProgressIndicator();
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
-
-
-//  trailing: Container(
-//                         width: 50,
-//                         child: Row(
-//                           children: [
-//                             IconButton(
-//                                 onPressed: () {},
-//                                 icon: Icon(
-//                                   Icons.edit,
-//                                   color: Theme.of(context).primaryColor,
-//                                 )),
-//                             IconButton(
-//                                 onPressed: () {},
-//                                 icon: Icon(
-//                                   Icons.delete,
-//                                   color: Theme.of(context).errorColor,
-//                                 ))
-//                           ],
-//                         ),
-//                       ),

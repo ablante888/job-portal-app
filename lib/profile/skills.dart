@@ -43,6 +43,23 @@ class SkillSet extends StatefulWidget {
 }
 
 class _SkillSetState extends State<SkillSet> {
+  final List<String> salaryExpectation = [
+    '>2000',
+    '>3000',
+    '>5000',
+    '>10000',
+    '>20000'
+  ];
+  List experienceLevel = [
+    'Fresh',
+    '2 years',
+    '3 years',
+    '5 years',
+    '10 years',
+    '> 10 years'
+  ];
+  var experienceLevelChoosed;
+  var salaryLevelChoosed;
   String? _jobPreference;
   String? uid;
   File? _image;
@@ -526,6 +543,76 @@ class _SkillSetState extends State<SkillSet> {
                 ),
               ),
               SizedBox(height: 16.0),
+              Text('Salary Expectation'),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      // filled: true,
+                      // fillColor: Colors.blue,
+                      hintText: 'Select an option',
+                      hintStyle: TextStyle(color: Colors.grey),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                    validator: ((value) {
+                      if (value == null) {
+                        return 'please select an option';
+                      }
+                    }),
+                    value: salaryLevelChoosed,
+                    items: salaryExpectation.map((item) {
+                      return DropdownMenuItem(
+                        child: Text(item),
+                        value: item,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        salaryLevelChoosed = value.toString();
+                      });
+                    }),
+              ),
+              Text('Your level of Experience'),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      // filled: true,
+                      // fillColor: Colors.blue,
+                      hintText: 'Select an option',
+                      hintStyle: TextStyle(color: Colors.grey),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                    validator: ((value) {
+                      if (value == null) {
+                        return 'please select an option';
+                      }
+                    }),
+                    value: experienceLevelChoosed,
+                    items: experienceLevel.map((item) {
+                      return DropdownMenuItem(
+                        child: Text(item),
+                        value: item,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        experienceLevelChoosed = value.toString();
+                      });
+                    }),
+              ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -541,19 +628,22 @@ class _SkillSetState extends State<SkillSet> {
                         languageSkills: languageSkill,
                         personalSkills: personalSkill,
                         professionalSkills: proffesionalSkill);
-                    // _uploadFile(); //uploades image to firebase storage
+                    //  _uploadFile(); //uploades image to firebase storage
 
                     SkillProvider provider = SkillProvider();
                     provider.skill = skill_Set;
                     otherProvider otherInfoProvider = otherProvider();
                     //otherInfoProvider.otherInfo = other_info;
                     try {
-                      saveSkillInfo(skill_Set);
                       _uploadFile();
+                      saveSkillInfo(skill_Set);
+                      // _uploadFile();
                       final other_info = Other(
                           aboutMe: about,
                           imageUrl: _imageUrl,
-                          preferredJob: _jobPreference);
+                          preferredJob: _jobPreference,
+                          SalaryExpectation: salaryLevelChoosed,
+                          levelOfExperience: experienceLevelChoosed);
                       saveOtherInfo(other_info);
                       // user_reference
                       //     .doc(getCurrentUserUid())

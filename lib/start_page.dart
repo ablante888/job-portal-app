@@ -4,16 +4,16 @@ import 'package:project1/user_account/rgister.dart';
 import 'user_account/auth_page.dart';
 import 'Employers/Employers_account/emp_auth_page.dart';
 
-class MyHomePage extends StatefulWidget {
-  // const MyHomePage({Key? key, required this.title}) : super(key: key);
+class StartPage extends StatefulWidget {
+  // const StartPage({Key? key, required this.title}) : super(key: key);
 
   //final String title = '';
-
+  static const routName = '/startPage';
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<StartPage> createState() => _StartPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _StartPageState extends State<StartPage> {
   int currentPage = 0;
   List<int> xx = [1, 2, 3, 4, 5];
   PageController _pageController = PageController(initialPage: 0);
@@ -155,6 +155,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         ))),
               ],
             ),
+            Container(
+              child: TextButton.icon(
+                  onPressed: () {},
+                  icon: Icon(Icons.forward),
+                  label: Text('Skip')),
+            )
           ],
         ),
       ),

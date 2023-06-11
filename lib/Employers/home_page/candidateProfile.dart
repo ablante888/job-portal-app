@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project1/Employers/Employers_account/empUtils.dart';
+import 'package:project1/Employers/home_page/messages.dart';
 import 'package:project1/profile/job_seeker_view_profile.dart';
 
 enum SortBy { Relevance, Experience, ApplicationDate }
 
 enum ViewMode { Grid, List }
 
-// class ApplicantPage extends StatefulWidget {
-//   static const routeName = '/ApplicantPage';
+// class candidateProfile extends StatefulWidget {
+//   static const routeName = '/candidateProfile';
 
-class ApplicantPage extends StatelessWidget {
-  static const routeName = '/ApplicantPage';
+class candidateProfile extends StatelessWidget {
+  static const routeName = '/candidateProfile';
   void addToShortlist(String jobId, String applicantId) {
     final candidatesReference = FirebaseFirestore.instance
         .collection('employers-job-postings')
@@ -90,47 +91,56 @@ class ApplicantPage extends StatelessWidget {
                         leading: Icon(Icons.message),
                         title: Text('Send Message'),
                         onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled:
-                                true, // Allow the bottom sheet to take up full screen height
-                            builder: (BuildContext context) {
-                              return Container(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Compose Message',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 16),
-                                    TextField(
-                                      maxLines: null,
-                                      keyboardType: TextInputType.multiline,
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        hintText: 'Enter your message...',
-                                      ),
-                                    ),
-                                    SizedBox(height: 16),
-                                    ElevatedButton(
-                                      child: Text('Send'),
-                                      onPressed: () {
-                                        // Handle send message action
-                                        // ...
-                                        Navigator.pop(
-                                            context); // Close the bottom sheet
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
+                          // Within the `FirstRoute` widget
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ComposeMessageScreen(
+                                    jobApplierId: applicant_id)),
                           );
+
+                          // showModalBottomSheet(
+                          //   context: context,
+                          //   isScrollControlled:
+                          //       true, // Allow the bottom sheet to take up full screen height
+                          //   builder: (BuildContext context) {
+                          //     return Container(
+                          //       padding: EdgeInsets.all(16.0),
+                          //       child: Column(
+                          //         mainAxisSize: MainAxisSize.min,
+                          //         children: [
+                          //           Text(
+                          //             'Compose Message',
+                          //             style: TextStyle(
+                          //               fontSize: 20,
+                          //               fontWeight: FontWeight.bold,
+                          //             ),
+                          //           ),
+                          //           SizedBox(height: 16),
+                          //           TextField(
+                          //             maxLines: null,
+                          //             keyboardType: TextInputType.multiline,
+                          //             decoration: InputDecoration(
+                          //               border: OutlineInputBorder(),
+                          //               hintText: 'Enter your message...',
+                          //             ),
+                          //           ),
+                          //           SizedBox(height: 16),
+                          //           ElevatedButton(
+                          //             child: Text('Send'),
+                          //             onPressed: () {
+                          //               // Handle send message action
+                          //               // ...
+                          //               Navigator.pop(
+                          //                   context); // Close the bottom sheet
+                          //             },
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     );
+                          //   },
+                          // );
                         },
                       ),
                     ],
@@ -142,26 +152,6 @@ class ApplicantPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // Code to perform action - Shortlist the applicant
-                            try {
-                              ChooseCandidate(jobId, applicant_id);
-                              EmpUtils.showSnackBar(
-                                  'saved Successfully', Colors.green);
-                            } catch (e) {
-                              EmpUtils.showSnackBar(e.toString(), Colors.green);
-                            }
-                            ChooseCandidate(jobId, applicant_id);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.green,
-                          ),
-                          child: Text('Shortlist'),
-                        ),
-                      ),
-                      SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {},

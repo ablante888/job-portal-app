@@ -92,6 +92,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     //     builder: (context) => Center(
     //           child: CircularProgressIndicator(),
     //         ));
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),

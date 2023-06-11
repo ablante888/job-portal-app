@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:project1/Employers/Employers_account/emp_verify.dart';
 import 'package:project1/Employers/bridgeTOemp_home_page.dart';
 import 'package:project1/Employers/home_page/emp_home_page.dart';
 import '../../firebase_options.dart';
@@ -99,6 +100,7 @@ class _EmpLoginWidgetState extends State<EmpLoginWidget> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
+      Navigator.pushNamed(context, VerifyEmpEmail.routeName);
       // await checkUserRole();
       // if (isJobSeeker) {
       //   Navigator.pushNamed(context, home.routeName);
